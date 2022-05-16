@@ -1,8 +1,14 @@
 # Project Name
 TARGET = FeedbackSynth
 
+# Includes
+C_INCLUDES = \
+	-ISource/
+
 # Sources
-CPP_SOURCES = feedbacksynth.cpp
+CPP_SOURCES = \
+	feedbacksynth.cpp \
+	Source/FeedbackSynthEngine.cpp
 
 # Library Locations
 LIBDAISY_DIR = lib/libDaisy

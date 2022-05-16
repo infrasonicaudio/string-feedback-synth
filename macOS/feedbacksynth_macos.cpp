@@ -7,29 +7,29 @@
  */
 
 #include <RtAudio.h>
-#include <daisysp.h>
 #include <iostream>
 #include <cstdlib>
+#include "FeedbackSynthEngine.h"
 
 static const unsigned int kSampleRate = 48000;
 static const unsigned int kNumChannels = 2;
 
-static daisysp::Oscillator osc;
+static infrasonic::FeedbackSynthEngine engine;
 
 // Two-channel sawtooth wave generator.
 int audio_callback( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
                     double streamTime, RtAudioStreamStatus status, void *userData )
 {
   unsigned int i, j;
+  float outL, outR;
   float *buffer = (float *) outputBuffer;
   if ( status )
     std::cout << "Stream underflow detected!" << std::endl;
   // Write interleaved audio data.
   for ( i=0; i<nBufferFrames; i++ ) {
-    float samp = osc.Process();
-    for ( j=0; j<kNumChannels; j++ ) {
-      *buffer++ = samp;
-    }
+    engine.Process(&outL, &outR);
+    *buffer++ = outL;
+    *buffer++ = outR;
   }
   return 0;
 }
@@ -42,10 +42,7 @@ int main()
     exit( 0 );
   }
 
-  osc.Init(static_cast<float>(kSampleRate));
-  osc.SetAmp(0.5);
-  osc.SetFreq(440.0);
-  osc.SetWaveform(daisysp::Oscillator::WAVE_POLYBLEP_TRI);
+  engine.Init(static_cast<float>(kSampleRate));
 
   RtAudio::StreamParameters parameters;
   parameters.deviceId = dac.getDefaultOutputDevice();

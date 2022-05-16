@@ -1,0 +1,38 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/DaisySP/**",
+                "${workspaceFolder}/lib/rtaudio/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-gcc-x64"
+        },
+        {
+            "name": "Daisy",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/DaisySP/**",
+                "${workspaceFolder}/lib/libDaisy/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "/usr/local/bin/arm-none-eabi-g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

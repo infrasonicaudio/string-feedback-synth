@@ -1,6 +1,6 @@
 # MacOS Build Target
 
-### WARNING: This is experimental and meant for debugging only
+### ⚠️ WARNING: This is experimental and meant for debugging only ⚠️
 
 This directory contains a `cmake` configuration anad alternate main source file for
 building the synth engine as a simple command line executable for direct playback

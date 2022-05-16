@@ -102,7 +102,7 @@
       "type": "shell"
     },
     {
-      "command": "mkdir -p build/macOS; cmake -B build/macOS; make -C build/macOS",
+      "command": "cmake -B build/macOS; cmake --build build/macOS",
       "label": "build_macOS",
       "problemMatcher": [
         "$gcc"
@@ -110,7 +110,7 @@
       "type": "shell"
     },
     {
-      "command": "rm -rF build/macOS",
+      "command": "rm -rf build/macOS",
       "label": "clean_macOS",
       "problemMatcher": [],
       "type": "shell"

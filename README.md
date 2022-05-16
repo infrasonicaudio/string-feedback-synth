@@ -1,6 +1,16 @@
-# String Feedback Synth Engine for Daisy Seed + SynthUX Simple Platform
+# String Feedback Synth Engine
 
-_TODO: Overview and build instructions_
+Physical modeling based synth engine for Daisy Seed + SynthUX Simple platform
+
+**This project is very much a living work in progress and should not be considered stable until the README indicates as much**
+
+## Overview
+
+_TODO_
+
+## Building and Installing
+
+_TODO_
 
 ## License
 

@@ -7,6 +7,7 @@
  */
 
 #include <RtAudio.h>
+#include <daisysp.h>
 #include <iostream>
 #include <cstdlib>
 

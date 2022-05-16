@@ -102,22 +102,31 @@
       "type": "shell"
     },
     {
-      "command": "cmake -B build/macOS; cmake --build build/macOS",
+      "command": "cmake -B build; cmake --build build",
       "label": "build_macOS",
+      "options": {
+        "cwd": "${workspaceFolder}/macOS"
+      },
       "problemMatcher": [
         "$gcc"
       ],
       "type": "shell"
     },
     {
-      "command": "rm -rf build/macOS",
+      "command": "rm -rf build",
       "label": "clean_macOS",
+      "options": {
+        "cwd": "${workspaceFolder}/macOS"
+      },
       "problemMatcher": [],
       "type": "shell"
     },
     {
-      "command": "./build/macOS/feedbacksynth",
+      "command": "./build/feedbacksynth",
       "label": "build_and_run_macOS",
+      "options": {
+        "cwd": "${workspaceFolder}/macOS"
+      },
       "dependsOn": "build_macOS",
       "problemMatcher": [],
       "type": "shell"

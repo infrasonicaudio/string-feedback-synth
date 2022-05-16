@@ -2,7 +2,7 @@
 TARGET = FeedbackSynth
 
 # Sources
-CPP_SOURCES = feedbacksynth_daisy.cpp
+CPP_SOURCES = feedbacksynth.cpp
 
 # Library Locations
 LIBDAISY_DIR = lib/libDaisy

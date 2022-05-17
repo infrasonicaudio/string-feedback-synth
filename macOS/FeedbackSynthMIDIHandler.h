@@ -30,11 +30,19 @@ class MIDIHandler {
         {
             assert(controls_ != nullptr);
             const auto value_norm = static_cast<float>(value) / 127.0f;
-            switch (cc) {
-                case 102: {
+            switch (CCParam(cc)) {
+
+                case CCParam::FeedbackGain:
+                    controls_->UpdateNormalized(ControlParam::FeedbackGain, value_norm);
+                    break; 
+
+                case CCParam::FeedbackDelay:
+                    controls_->UpdateNormalized(ControlParam::FeedbackDelay, value_norm);
+                    break; 
+
+                case CCParam::StringPitch:
                     controls_->UpdateNormalized(ControlParam::StringPitch, value_norm);
                     break;
-                }
                 
                 default:
                     break;
@@ -42,6 +50,12 @@ class MIDIHandler {
         }
 
     private:
+
+        enum class CCParam: unsigned char {
+            FeedbackGain    = 26,
+            FeedbackDelay   = 29,
+            StringPitch     = 102
+        };
 
         inline static Controls *controls_ = nullptr;
 };

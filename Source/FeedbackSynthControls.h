@@ -10,14 +10,24 @@ namespace infrasonic {
 namespace FeedbackSynth {
     
 enum class ControlParam {
-    StringPitch
+    StringPitch,
+    FeedbackGain,
+    FeedbackDelay
 };
 
 using Controls = ControlsRegistry<ControlParam>;
 
 static void register_controls(Controls &controls, Engine &engine) {
     using namespace std::placeholders;
-    controls.Register(ControlParam::StringPitch, 40.0f, 20.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1));
+
+    // Pitch as nn
+    controls.Register(ControlParam::StringPitch, 40.0f, 20.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1), 0.2f);
+
+    // Feedback Gain in dbFS
+    controls.Register(ControlParam::FeedbackGain, -40.0f, -40.0f, 6.0f, std::bind(&Engine::SetFeedbackGain, &engine, _1));
+
+    // Feedback delay in seconds
+    controls.Register(ControlParam::FeedbackDelay, 0.001f, 0.001f, 0.2f, std::bind(&Engine::SetFeedbackDelay, &engine, _1));
 }
 
 }

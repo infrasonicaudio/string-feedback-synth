@@ -56,7 +56,7 @@ class Engine {
         daisysp::String strings_[2];
         daisysp::DelayLine<float, kMaxFeedbackDelaySamp> fb_delayline_[2];
 
-        // TODO: Need to make generic 2-pole biquad filters
+        // TODO: Write generic 2-pole biquad filters
         daisysp::ATone fb_hpf_[2];
         // daisysp::Biquad fb_lpf_[2];
 

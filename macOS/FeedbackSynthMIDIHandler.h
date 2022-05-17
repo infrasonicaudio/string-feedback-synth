@@ -37,7 +37,7 @@ class MIDIHandler {
                     break; 
 
                 case CCParam::FeedbackDelay:
-                    controls_->UpdateNormalized(ControlParam::FeedbackDelay, value_norm);
+                    controls_->UpdateNormalized(ControlParam::FeedbackDelay, value_norm, false, daisysp::Mapping::EXP);
                     break; 
 
                 case CCParam::StringPitch:

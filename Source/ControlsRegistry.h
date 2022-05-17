@@ -50,12 +50,12 @@ class ControlsRegistry {
             }
         }
 
-        void UpdateNormalized(const ParamId id, const float normValue, const bool immediate = false)
+        void UpdateNormalized(const ParamId id, const float normValue, const bool immediate = false, const daisysp::Mapping curve = daisysp::Mapping::LINEAR)
         {
             auto it = param_states_.find(id);
             if (it != param_states_.end()) {
                 auto &state = it->second;
-                auto mappedValue = daisysp::fmap(DSY_CLAMP(normValue, 0.0f, 1.0f), state.min, state.max);
+                auto mappedValue = daisysp::fmap(DSY_CLAMP(normValue, 0.0f, 1.0f), state.min, state.max, curve);
                 state.target = mappedValue;
                 if (immediate) {
                     state.current = mappedValue;

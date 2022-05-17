@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <daisysp.h>
+#include "DSPUtils.h"
 
 namespace infrasonic {
 
@@ -31,7 +32,7 @@ class ControlsRegistry {
 
         void Register(const ParamId id, const float initial_value, const float min, const float max, ParamHandler handler, float smooth_time = 0.05f)
         {
-            ParamState state(initial_value, min, max, smooth_coef(smooth_time, control_rate_), handler);
+            ParamState state(initial_value, min, max, onepole_coef(smooth_time, control_rate_), handler);
             param_states_.insert({id, state});
         }
 
@@ -110,15 +111,6 @@ class ControlsRegistry {
 
         float control_rate_{};
         ParamStates param_states_{};
-
-        // TODO: could be in a generalized utility file
-        static float smooth_coef(float time, float sample_rate)
-        {
-            if (time == 0.0f || sample_rate == 0.0f)
-                return 1.0f;
-
-            return 1.0f / (time * sample_rate);
-        };
 };
 
 }

@@ -1,5 +1,8 @@
 {
     "files.exclude": {
         "**/.gitmodules": true
+    },
+    "files.associations": {
+        "istream": "cpp"
     }
 }

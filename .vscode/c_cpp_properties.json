@@ -3,15 +3,14 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/lib/DaisySP/**",
-                "${workspaceFolder}/lib/rtaudio/**"
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
-            ],
+                "_UNICODE",
+                "TARGET_MACOS=1"
+            ] ,
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
@@ -20,9 +19,7 @@
         {
             "name": "Daisy",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/lib/DaisySP/**",
-                "${workspaceFolder}/lib/libDaisy/**"
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",

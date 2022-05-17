@@ -9,21 +9,31 @@ void FeedbackSynthEngine::Init(const float sample_rate)
     noise_.SetAmp(0.1f);
     // noise_.SetAmp(0.000001f); // TODO dbfs to linear helper
 
-    strings_[0].Init(sample_rate);
-    strings_[1].Init(sample_rate);
+    for (unsigned int i=0; i<2; i++) {
+        strings_[i].Init(sample_rate);
+        fb_delay_[i].Init();
 
-    fb_delay_[0].Init();
-    fb_delay_[1].Init();
+        // TODO: tweak these?
+        strings_[i].SetBrightness(0.5f);
+        strings_[i].SetNonLinearity(0.0f);
+        strings_[i].SetFreq(mtof(40.0f));
+        strings_[i].SetDamping(0.5f);
+    }
+}
 
-    // TEMP
-    strings_[0].SetBrightness(0.5f);
-    strings_[0].SetNonLinearity(0.0f);
-    strings_[0].SetFreq(mtof(40.0f));
-    strings_[0].SetDamping(0.5f);
+void FeedbackSynthEngine::SetStringFreq(const float freq)
+{
+    strings_[0].SetFreq(freq);
+    strings_[1].SetFreq(freq);
 }
 
 void FeedbackSynthEngine::Process(float *outL, float *outR)
 {
-    float samp = strings_[0].Process(noise_.Process());
-    *outL = *outR = samp;
+    const float noise_samp = noise_.Process();
+
+    float sampL = strings_[0].Process(noise_samp);
+    float sampR = strings_[1].Process(noise_samp);
+
+    *outL = sampL;
+    *outR = sampR;
 }

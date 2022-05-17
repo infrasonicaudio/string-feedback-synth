@@ -12,8 +12,8 @@ static const auto kSampleRate = SaiHandle::Config::SampleRate::SAI_48KHZ;
 static const size_t kBlockSize = 4;
 
 static DaisySeed hw;
-static FeedbackSynthEngine engine;
-static FeedbackSynthControls controls;
+static FeedbackSynth::Engine engine;
+static FeedbackSynth::Controls controls;
 
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
@@ -31,7 +31,7 @@ int main(void)
 
     engine.Init(hw.AudioSampleRate());
     controls.Init(hw.AudioSampleRate() / static_cast<float>(kBlockSize));
-    register_feedbacksynth_controls(controls, engine);
+    FeedbackSynth::register_controls(controls, engine);
 
     hw.StartAudio(AudioCallback);
 

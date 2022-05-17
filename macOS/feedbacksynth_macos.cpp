@@ -23,13 +23,13 @@ static unsigned int kBlockSize = 64;
 using namespace infrasonic;
 
 struct AudioCallbackData {
-  FeedbackSynthEngine &engine;
-  FeedbackSynthControls &controls;
+  FeedbackSynth::Engine &engine;
+  FeedbackSynth::Controls &controls;
 };
 
 void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
 {
-  using Parser = MIDIParser<FeedbackSynthMIDIHandler>;
+  using Parser = MIDIParser<FeedbackSynth::MIDIHandler>;
   Parser::Parse(message);
 }
 
@@ -136,8 +136,8 @@ int main()
   RtAudio dac;
   std::unique_ptr<RtMidiIn> midiin;
 
-  FeedbackSynthEngine engine;
-  FeedbackSynthControls controls;
+  FeedbackSynth::Engine engine;
+  FeedbackSynth::Controls controls;
 
   AudioCallbackData callbackData{engine, controls};
 
@@ -154,8 +154,8 @@ int main()
   // This should be done AFTER opening DAC but before starting stream
   // so that we are using the system-updated block size
   controls.Init(static_cast<float>(kSampleRate) / static_cast<float>(kBlockSize));
-  register_feedbacksynth_controls(controls, engine);
-  FeedbackSynthMIDIHandler::Init(&controls);
+  FeedbackSynth::register_controls(controls, engine);
+  FeedbackSynth::MIDIHandler::Init(&controls);
 
   // Start DAC output stream
   try {

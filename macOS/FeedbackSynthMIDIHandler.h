@@ -3,13 +3,14 @@
 #define INFS_FEEDBACKSYNTHMIDIHANDLER_H
 
 namespace infrasonic {
+namespace FeedbackSynth {
 
-class FeedbackSynthMIDIHandler {
+class MIDIHandler {
 
     public:
-        FeedbackSynthMIDIHandler() = delete;
+        MIDIHandler() = delete;
 
-        static void Init(FeedbackSynthControls * const controls)
+        static void Init(Controls * const controls)
         {
             controls_ = controls;
         }
@@ -17,7 +18,7 @@ class FeedbackSynthMIDIHandler {
         static void NoteOn(unsigned char channel, unsigned char nn, unsigned char velocity)
         {
             assert(controls_ != nullptr);
-            controls_->Update(FeedbackSynthParam::StringPitch, nn, true);
+            controls_->Update(ControlParam::StringPitch, nn, true);
         }
 
         static void NoteOff(unsigned char channel, unsigned char nn, unsigned char velocity)
@@ -31,7 +32,7 @@ class FeedbackSynthMIDIHandler {
             const auto value_norm = static_cast<float>(value) / 127.0f;
             switch (cc) {
                 case 102: {
-                    controls_->UpdateNormalized(FeedbackSynthParam::StringPitch, value_norm);
+                    controls_->UpdateNormalized(ControlParam::StringPitch, value_norm);
                     break;
                 }
                 
@@ -42,9 +43,11 @@ class FeedbackSynthMIDIHandler {
 
     private:
 
-        inline static FeedbackSynthControls *controls_ = nullptr;
+        inline static Controls *controls_ = nullptr;
 };
 
+// namespace
+}
 }
 
 #endif

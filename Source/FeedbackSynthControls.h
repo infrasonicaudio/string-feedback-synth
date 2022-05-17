@@ -7,18 +7,20 @@
 #include "FeedbackSynthEngine.h"
 
 namespace infrasonic {
+namespace FeedbackSynth {
     
-enum class FeedbackSynthParam {
+enum class ControlParam {
     StringPitch
 };
 
-using FeedbackSynthControls = ControlsRegistry<FeedbackSynthParam>;
+using Controls = ControlsRegistry<ControlParam>;
 
-static void register_feedbacksynth_controls(FeedbackSynthControls &controls, FeedbackSynthEngine &engine) {
+static void register_controls(Controls &controls, Engine &engine) {
     using namespace std::placeholders;
-    controls.Register(FeedbackSynthParam::StringPitch, 40.0f, 20.0f, 80.0f, std::bind(&FeedbackSynthEngine::SetStringPitch, &engine, _1));
+    controls.Register(ControlParam::StringPitch, 40.0f, 20.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1));
 }
 
+}
 }
 
 #endif

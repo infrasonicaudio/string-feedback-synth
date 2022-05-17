@@ -5,18 +5,19 @@
 #include <daisysp.h>
 
 namespace infrasonic {
+namespace FeedbackSynth {
 
-class FeedbackSynthEngine {
+class Engine {
 
     public:
 
-        FeedbackSynthEngine() {};
-        ~FeedbackSynthEngine() {};
+        Engine() {};
+        ~Engine() {};
 
-        FeedbackSynthEngine(const FeedbackSynthEngine &other) = delete;
-        FeedbackSynthEngine(FeedbackSynthEngine &&other) = delete;
-        FeedbackSynthEngine& operator=(const FeedbackSynthEngine &other) = delete;
-        FeedbackSynthEngine& operator=(FeedbackSynthEngine &&other) = delete;
+        Engine(const Engine &other) = delete;
+        Engine(Engine &&other) = delete;
+        Engine& operator=(const Engine &other) = delete;
+        Engine& operator=(Engine &&other) = delete;
 
         void Init(const float sample_rate);
 
@@ -30,6 +31,7 @@ class FeedbackSynthEngine {
         daisysp::DelayLine<float, 12000> fb_delay_[2]; // long enough for 250ms at 48kHz
 };
 
+}
 }
 
 #endif

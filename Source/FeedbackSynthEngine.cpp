@@ -1,9 +1,9 @@
 #include "FeedbackSynthEngine.h"
 
-using namespace infrasonic;
+using namespace infrasonic::FeedbackSynth;
 using namespace daisysp;
 
-void FeedbackSynthEngine::Init(const float sample_rate)
+void Engine::Init(const float sample_rate)
 {
     noise_.Init();
     noise_.SetAmp(0.1f);
@@ -21,14 +21,14 @@ void FeedbackSynthEngine::Init(const float sample_rate)
     }
 }
 
-void FeedbackSynthEngine::SetStringPitch(const float nn)
+void Engine::SetStringPitch(const float nn)
 {
     const auto freq = mtof(nn);
     strings_[0].SetFreq(freq);
     strings_[1].SetFreq(freq);
 }
 
-void FeedbackSynthEngine::Process(float *outL, float *outR)
+void Engine::Process(float *outL, float *outR)
 {
     const float noise_samp = noise_.Process();
 

@@ -16,7 +16,7 @@ static FeedbackSynthEngine engine;
 
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
-    Controls::Process();
+    // Controls::Process();
     for (size_t i=0; i<size; i++) {
         engine.Process(&OUT_L[i], &OUT_R[i]);
     }
@@ -30,7 +30,7 @@ int main(void)
 
     engine.Init(hw.AudioSampleRate());
 
-    Controls::Init(&engine, hw.AudioSampleRate(), kBlockSize);
+    // Controls::Init(&engine, hw.AudioSampleRate(), kBlockSize);
 
     hw.StartAudio(AudioCallback);
 

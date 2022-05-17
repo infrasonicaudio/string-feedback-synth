@@ -8,7 +8,6 @@ C_INCLUDES = \
 # Sources
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
-	Source/Controls.cpp \
 	Source/FeedbackSynthEngine.cpp
 
 # Library Locations

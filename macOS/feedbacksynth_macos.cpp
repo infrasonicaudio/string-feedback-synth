@@ -20,10 +20,16 @@ static const unsigned int kNumChannels = 2;
 static unsigned int kBlockSize = 64;
 
 using namespace infrasonic;
+using EngineControls = infrasonic::Controls<FeedbackSynthEngine::ParamName>;
+
+struct AudioCallbackData {
+  FeedbackSynthEngine &engine;
+  EngineControls &controls;
+};
 
 void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
 {
-  const auto *parser = static_cast<MIDIParser<Controls>*>(userData);
+  const auto *parser = static_cast<MIDIParser<EngineControls>*>(userData);
   parser->Parse(message);
 }
 
@@ -34,22 +40,22 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
   unsigned int i, j;
   float outL, outR;
   float *buffer = (float *) outputBuffer;
-  auto *engine = static_cast<FeedbackSynthEngine*>(userData);
+  auto *data = static_cast<AudioCallbackData*>(userData);
 
-  Controls::Process();
+  data->controls.Process();
 
   if ( status )
     std::cout << "Stream underflow detected!" << std::endl;
   // Write interleaved audio data.
   for ( i=0; i<nBufferFrames; i++ ) {
-    engine->Process(&outL, &outR);
+    data->engine.Process(&outL, &outR);
     *buffer++ = outL;
     *buffer++ = outR;
   }
   return 0;
 }
 
-void startMIDI(std::unique_ptr<RtMidiIn> &midiin, MIDIParser<Controls> &parser) {
+void startMIDI(std::unique_ptr<RtMidiIn> &midiin, MIDIParser<EngineControls> &parser) {
 
   try {
     midiin = std::make_unique<RtMidiIn>();
@@ -101,7 +107,7 @@ void startMIDI(std::unique_ptr<RtMidiIn> &midiin, MIDIParser<Controls> &parser) 
   }
 }
 
-void setupDAC(RtAudio &dac, FeedbackSynthEngine &engine) {
+void setupDAC(RtAudio &dac, AudioCallbackData &callbackData) {
 
   if ( dac.getDeviceCount() < 1 ) {
     std::cout << "\nNo audio devices found!\n";
@@ -116,7 +122,7 @@ void setupDAC(RtAudio &dac, FeedbackSynthEngine &engine) {
 
   try {
     dac.openStream( &parameters, NULL, RTAUDIO_FLOAT32,
-                    kSampleRate, &kBlockSize, &audio_callback, static_cast<void*>(&engine));
+                    kSampleRate, &kBlockSize, &audio_callback, static_cast<void*>(&callbackData));
   }
   catch ( RtAudioError& e ) {
     e.printMessage();
@@ -130,8 +136,11 @@ int main()
   RtAudio dac;
   std::unique_ptr<RtMidiIn> midiin;
 
-  MIDIParser<Controls> parser;
+  EngineControls controls;
+  MIDIParser<EngineControls> parser;
   FeedbackSynthEngine engine;
+
+  AudioCallbackData callbackData{engine, controls};
 
   // Init DSP classes
   engine.Init(static_cast<float>(kSampleRate));
@@ -140,12 +149,15 @@ int main()
   startMIDI(midiin, parser);
 
   // Open DAC for Audio Output
-  setupDAC(dac, engine);
+  setupDAC(dac, callbackData);
 
   // Initialize controls
   // This should be done AFTER opening DAC but before starting stream
   // so that we are using the system-updated block size
-  Controls::Init(&engine, static_cast<float>(kSampleRate), static_cast<size_t>(kBlockSize));
+  controls.Init(static_cast<float>(kSampleRate), static_cast<size_t>(kBlockSize));
+  
+  // TODO: Move to function
+  controls.Register(FeedbackSynthEngine::ParamName::StringFreq, [&](float value){ engine.SetStringFreq(value); }, 1000.0f);
 
   // Start DAC output stream
   try {

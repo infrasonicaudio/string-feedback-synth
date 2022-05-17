@@ -9,6 +9,10 @@ namespace infrasonic {
 class FeedbackSynthEngine {
 
     public:
+    
+        enum class ParamName {
+            StringFreq
+        };
 
         FeedbackSynthEngine() {};
         ~FeedbackSynthEngine() {};

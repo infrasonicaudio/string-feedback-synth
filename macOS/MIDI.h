@@ -19,12 +19,13 @@ enum class MIDIStatus: unsigned char {
 template <class Handler>
 class MIDIParser {
 
-    using Message = std::vector< unsigned char >*;
+    using Message = std::vector<unsigned char>*;
 
     public:
-        MIDIParser() = delete;
+        MIDIParser() {};
+        ~MIDIParser() {};
 
-        static void Parse(const Message message)
+        void Parse(const Message message) const
         {
             const unsigned int nBytes = message->size();
             const unsigned char status = message->at(0) & 0xF0; 

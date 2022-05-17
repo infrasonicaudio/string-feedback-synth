@@ -21,18 +21,15 @@ static unsigned int kBlockSize = 64;
 
 using namespace infrasonic;
 
-void midi_callback( double deltatime, std::vector< unsigned char > *message, void *userData )
+void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
 {
-  MIDIParser<Controls>::Parse(message);
-  // for ( unsigned int i=0; i<nBytes; i++ )
-  //   std::cout << "Byte " << i << " = " << (int)message->at(i) << ", ";
-  // if ( nBytes > 0 )
-  //   std::cout << "stamp = " << deltatime << std::endl;
+  const auto *parser = static_cast<MIDIParser<Controls>*>(userData);
+  parser->Parse(message);
 }
 
 // Two-channel sawtooth wave generator.
-int audio_callback( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
-                    double streamTime, RtAudioStreamStatus status, void *userData )
+int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+                   double streamTime, RtAudioStreamStatus status, void *userData)
 {
   unsigned int i, j;
   float outL, outR;
@@ -52,7 +49,7 @@ int audio_callback( void *outputBuffer, void *inputBuffer, unsigned int nBufferF
   return 0;
 }
 
-void startMIDI(std::unique_ptr<RtMidiIn> &midiin, FeedbackSynthEngine &engine) {
+void startMIDI(std::unique_ptr<RtMidiIn> &midiin, MIDIParser<Controls> &parser) {
 
   try {
     midiin = std::make_unique<RtMidiIn>();
@@ -91,7 +88,7 @@ void startMIDI(std::unique_ptr<RtMidiIn> &midiin, FeedbackSynthEngine &engine) {
     if (portNum > 0 && portNum <= midiin->getPortCount()) {
       try {
         midiin->openPort(portNum-1);
-        midiin->setCallback(midi_callback, static_cast<void*>(&engine));
+        midiin->setCallback(midi_callback, static_cast<void*>(&parser));
         midiin->ignoreTypes();
         opened = true;
       }
@@ -129,16 +126,18 @@ void setupDAC(RtAudio &dac, FeedbackSynthEngine &engine) {
 
 int main()
 {
-  char input;
+
   RtAudio dac;
   std::unique_ptr<RtMidiIn> midiin;
+
+  MIDIParser<Controls> parser;
   FeedbackSynthEngine engine;
 
   // Init DSP classes
   engine.Init(static_cast<float>(kSampleRate));
 
   // Start MIDI
-  startMIDI(midiin, engine);
+  startMIDI(midiin, parser);
 
   // Open DAC for Audio Output
   setupDAC(dac, engine);
@@ -157,6 +156,7 @@ int main()
     exit( 0 );
   }
 
+  char input;
   std::cout << "\nPlaying ... press <enter> to quit.\n";
   std::cin.get( input );
   try {

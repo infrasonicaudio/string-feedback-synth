@@ -1,6 +1,6 @@
 #include <daisy_seed.h> 
 #include "FeedbackSynthEngine.h"
-#include "Controls.h"
+#include "FeedbackSynthControls.h"
 
 // TODO: This is just a placeholder file until the engine code is developed
 
@@ -13,10 +13,11 @@ static const size_t kBlockSize = 4;
 
 static DaisySeed hw;
 static FeedbackSynthEngine engine;
+static FeedbackSynthControls controls;
 
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
-    // Controls::Process();
+    controls.Process();
     for (size_t i=0; i<size; i++) {
         engine.Process(&OUT_L[i], &OUT_R[i]);
     }
@@ -29,8 +30,8 @@ int main(void)
     hw.SetAudioBlockSize(kBlockSize);
 
     engine.Init(hw.AudioSampleRate());
-
-    // Controls::Init(&engine, hw.AudioSampleRate(), kBlockSize);
+    controls.Init(hw.AudioSampleRate() / static_cast<float>(kBlockSize));
+    register_feedbacksynth_controls(controls, engine);
 
     hw.StartAudio(AudioCallback);
 

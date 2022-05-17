@@ -132,7 +132,6 @@ void setupDAC(RtAudio &dac, AudioCallbackData &callbackData) {
 
 int main()
 {
-
   RtAudio dac;
   std::unique_ptr<RtMidiIn> midiin;
 

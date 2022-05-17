@@ -27,6 +27,10 @@ class Engine {
 
         void SetFeedbackDelay(const float delay_s);
 
+        void SetFeedbackHPFCutoff(const float cutoff_hz);
+
+        // void SetFeedbackLPFCutoff(const float cutoff_hz);
+
         void Process(float *outL, float *outR);
 
     private:
@@ -44,6 +48,10 @@ class Engine {
         daisysp::WhiteNoise noise_;
         daisysp::String strings_[2];
         daisysp::DelayLine<float, kMaxFeedbackDelaySamp> fb_delayline_[2];
+
+        // TODO: Need to make generic 2-pole biquad filters
+        daisysp::ATone fb_hpf_[2];
+        // daisysp::Biquad fb_lpf_[2];
 };
 
 }

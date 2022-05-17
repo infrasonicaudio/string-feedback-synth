@@ -14,14 +14,20 @@ void Engine::Init(const float sample_rate)
     // noise_.SetAmp(0.000001f); // TODO dbfs to linear helper
 
     for (unsigned int i=0; i<2; i++) {
-        strings_[i].Init(sample_rate);
-        fb_delayline_[i].Init();
 
         // TODO: tweak these?
+        strings_[i].Init(sample_rate);
         strings_[i].SetBrightness(0.5f);
         strings_[i].SetNonLinearity(0.0f);
         strings_[i].SetFreq(mtof(40.0f));
         strings_[i].SetDamping(0.5f);
+
+        fb_delayline_[i].Init();
+
+        fb_hpf_[i].Init(sample_rate);
+
+        float hpcutoff = 250.0f;
+        fb_hpf_[i].SetFreq(hpcutoff);
     }
 }
 
@@ -65,6 +71,8 @@ void Engine::Process(float *outL, float *outR)
     sampR = SoftClip(sampR * 2.0f);
 
     // TODO: HP/LP Filter
+    sampL = fb_hpf_[0].Process(sampL);
+    sampR = fb_hpf_[1].Process(sampR);
 
     // Tap to output 
     *outL = sampL * 0.5f;

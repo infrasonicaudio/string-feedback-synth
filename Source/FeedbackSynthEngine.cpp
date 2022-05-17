@@ -74,8 +74,8 @@ void Engine::Process(float *outL, float *outR)
     sampR = fb_hpf_[1].Process(sampR);
 
     // Tap to output 
-    *outL = sampL * 0.5f;
-    *outR = sampR * 0.5f;
+    *outL = sampL * 0.1f;
+    *outR = sampR * 0.1f;
 
     // TODO: Allpass
 

@@ -20,7 +20,7 @@ class FeedbackSynthEngine {
 
         void Init(const float sample_rate);
 
-        void SetStringFreq(const float freq);
+        void SetStringPitch(const float nn);
 
         void Process(float *outL, float *outR);
 

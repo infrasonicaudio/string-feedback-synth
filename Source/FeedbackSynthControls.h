@@ -2,19 +2,21 @@
 #ifndef INFS_FEEDBACKSYNTHCONTROLS_H
 #define INFS_FEEDBACKSYNTHCONTROLS_H
 
+#include <functional>
 #include "Controls.h"
 #include "FeedbackSynthEngine.h"
 
 namespace infrasonic {
     
 enum class FeedbackSynthParam {
-    StringFreq
+    StringPitch
 };
 
 using FeedbackSynthControls = Controls<FeedbackSynthParam>;
 
 static void register_feedbacksynth_controls(FeedbackSynthControls &controls, FeedbackSynthEngine &engine) {
-    controls.Register(FeedbackSynthParam::StringFreq, [&](float value){ engine.SetStringFreq(value); }, daisysp::mtof(40));
+    using namespace std::placeholders;
+    controls.Register(FeedbackSynthParam::StringPitch, 40.0f, 20.0f, 80.0f, std::bind(&FeedbackSynthEngine::SetStringPitch, &engine, _1));
 }
 
 }

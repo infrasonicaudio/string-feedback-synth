@@ -21,8 +21,9 @@ void FeedbackSynthEngine::Init(const float sample_rate)
     }
 }
 
-void FeedbackSynthEngine::SetStringFreq(const float freq)
+void FeedbackSynthEngine::SetStringPitch(const float nn)
 {
+    const auto freq = mtof(nn);
     strings_[0].SetFreq(freq);
     strings_[1].SetFreq(freq);
 }

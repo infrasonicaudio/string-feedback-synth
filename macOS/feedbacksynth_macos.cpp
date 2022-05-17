@@ -29,7 +29,8 @@ struct AudioCallbackData {
 
 void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
 {
-  MIDIParser<FeedbackSynthMIDIHandler>::Parse(message);
+  using Parser = MIDIParser<FeedbackSynthMIDIHandler>;
+  Parser::Parse(message);
 }
 
 // Two-channel sawtooth wave generator.

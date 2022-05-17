@@ -17,6 +17,7 @@ class FeedbackSynthMIDIHandler {
         static void NoteOn(unsigned char channel, unsigned char nn, unsigned char velocity)
         {
             assert(controls_ != nullptr);
+            controls_->Update(FeedbackSynthParam::StringPitch, nn, true);
         }
 
         static void NoteOff(unsigned char channel, unsigned char nn, unsigned char velocity)
@@ -30,8 +31,7 @@ class FeedbackSynthMIDIHandler {
             const auto value_norm = static_cast<float>(value) / 127.0f;
             switch (cc) {
                 case 102: {
-                    float nn = daisysp::fmap(value_norm, 20.0f, 60.0f);
-                    controls_->Update(FeedbackSynthParam::StringFreq, daisysp::mtof(nn));
+                    controls_->UpdateNormalized(FeedbackSynthParam::StringPitch, value_norm);
                     break;
                 }
                 

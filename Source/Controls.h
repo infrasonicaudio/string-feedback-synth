@@ -29,9 +29,9 @@ class Controls {
             control_rate_ = control_rate;
         }
 
-        void Register(const ParamId id, const ParamHandler handler, const float initial_value = 0.0f, const float smooth_time = 0.05f)
+        void Register(const ParamId id, const float initial_value, const float min, const float max, ParamHandler handler, float smooth_time = 0.05f)
         {
-            ParamState state(initial_value, smooth_coef(smooth_time, control_rate_), handler);
+            ParamState state(initial_value, min, max, smooth_coef(smooth_time, control_rate_), handler);
             param_states_.insert({id, state});
         }
 
@@ -41,9 +41,23 @@ class Controls {
             auto it = param_states_.find(id);
             if (it != param_states_.end()) {
                 auto &state = it->second;
-                state.target = value;
+                auto clampedValue = DSY_CLAMP(value, state.min, state.max);
+                state.target = clampedValue;
                 if (immediate) {
-                    state.current = value;
+                    state.current = clampedValue;
+                }
+            }
+        }
+
+        void UpdateNormalized(const ParamId id, const float normValue, const bool immediate = false)
+        {
+            auto it = param_states_.find(id);
+            if (it != param_states_.end()) {
+                auto &state = it->second;
+                auto mappedValue = daisysp::fmap(DSY_CLAMP(normValue, 0.0f, 1.0f), state.min, state.max);
+                state.target = mappedValue;
+                if (immediate) {
+                    state.current = mappedValue;
                 }
             }
         }
@@ -76,13 +90,17 @@ class Controls {
             float current;
             float target;
             
+            const float min;
+            const float max;
             const float smooth_coef;
             const ParamHandler handler;
 
             ParamState() = delete;
-            ParamState(const float initial, const float smooth_coef, const ParamHandler handler)
+            ParamState(const float initial, const float min, const float max, const float smooth_coef, const ParamHandler handler)
                 : current(initial)
                 , target(initial)
+                , min(min)
+                , max(max)
                 , smooth_coef(smooth_coef)
                 , handler(handler)
             {}

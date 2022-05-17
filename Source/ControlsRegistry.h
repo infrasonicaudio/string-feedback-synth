@@ -15,14 +15,14 @@ namespace infrasonic {
  * @tparam ParamId Template parameter specifying the parameter ID type
  */
 template<typename ParamId>
-class Controls {
+class ControlsRegistry {
     
     public:
 
         using ParamHandler = std::function<void(const float)>;
 
-        Controls() {};
-        ~Controls() {};
+        ControlsRegistry() {};
+        ~ControlsRegistry() {};
 
         void Init(const float control_rate)
         {

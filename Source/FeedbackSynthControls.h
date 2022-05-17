@@ -3,7 +3,7 @@
 #define INFS_FEEDBACKSYNTHCONTROLS_H
 
 #include <functional>
-#include "Controls.h"
+#include "ControlsRegistry.h"
 #include "FeedbackSynthEngine.h"
 
 namespace infrasonic {
@@ -12,7 +12,7 @@ enum class FeedbackSynthParam {
     StringPitch
 };
 
-using FeedbackSynthControls = Controls<FeedbackSynthParam>;
+using FeedbackSynthControls = ControlsRegistry<FeedbackSynthParam>;
 
 static void register_feedbacksynth_controls(FeedbackSynthControls &controls, FeedbackSynthEngine &engine) {
     using namespace std::placeholders;

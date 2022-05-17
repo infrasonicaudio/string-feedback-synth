@@ -4,6 +4,7 @@
     },
     "files.associations": {
         "istream": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "regex": "cpp"
     }
 }

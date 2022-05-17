@@ -17,7 +17,7 @@ void Engine::Init(const float sample_rate)
 
         // TODO: tweak these?
         strings_[i].Init(sample_rate);
-        strings_[i].SetBrightness(0.5f);
+        strings_[i].SetBrightness(0.85f);
         strings_[i].SetNonLinearity(0.0f);
         strings_[i].SetFreq(mtof(40.0f));
         strings_[i].SetDamping(0.5f);
@@ -60,15 +60,16 @@ void Engine::Process(float *outL, float *outR)
 
     // Get noise + feedback output
     float inL = fb_delayline_[0].Read(fb_delay_samp_) + noise_samp; 
-    float inR = fb_delayline_[1].Read(fb_delay_samp_) + noise_samp;
+    float inR = fb_delayline_[1].Read(daisysp::fmax(1.0f, fb_delay_samp_ - 16.f)) + noise_samp;
 
     // Process through KS resonator
     float sampL = strings_[0].Process(inL);
     float sampR = strings_[1].Process(inR);
 
     // Distort + Clip
-    sampL = SoftClip(sampL * 2.0f);
-    sampR = SoftClip(sampR * 2.0f);
+    // TODO: Oversample this? Another distortion algo maybe?
+    sampL = SoftClip(sampL * 4.0f);
+    sampR = SoftClip(sampR * 4.0f);
 
     // TODO: HP/LP Filter
     sampL = fb_hpf_[0].Process(sampL);
@@ -78,7 +79,7 @@ void Engine::Process(float *outL, float *outR)
     *outL = sampL * 0.5f;
     *outR = sampR * 0.5f;
 
-    // TODO: Stereo + Allpass modulation
+    // TODO: Allpass
 
     // Write back into delay with attenuation
     fb_delayline_[0].Write(sampL * fb_gain_);

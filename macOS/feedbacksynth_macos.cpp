@@ -12,25 +12,24 @@
 #include <RtAudio.h>
 #include <RtMidi.h>
 #include "FeedbackSynthEngine.h"
-#include "MIDI.h"
-#include "Controls.h"
+#include "FeedbackSynthControls.h"
+#include "FeedbackSynthMIDIHandler.h"
+#include "MIDIParser.h"
 
 static const unsigned int kSampleRate = 48000;
 static const unsigned int kNumChannels = 2;
 static unsigned int kBlockSize = 64;
 
 using namespace infrasonic;
-using EngineControls = infrasonic::Controls<FeedbackSynthEngine::ParamName>;
 
 struct AudioCallbackData {
   FeedbackSynthEngine &engine;
-  EngineControls &controls;
+  FeedbackSynthControls &controls;
 };
 
 void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
 {
-  const auto *parser = static_cast<MIDIParser<EngineControls>*>(userData);
-  parser->Parse(message);
+  MIDIParser<FeedbackSynthMIDIHandler>::Parse(message);
 }
 
 // Two-channel sawtooth wave generator.
@@ -55,7 +54,7 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
   return 0;
 }
 
-void startMIDI(std::unique_ptr<RtMidiIn> &midiin, MIDIParser<EngineControls> &parser) {
+void startMIDI(std::unique_ptr<RtMidiIn> &midiin) {
 
   try {
     midiin = std::make_unique<RtMidiIn>();
@@ -94,7 +93,7 @@ void startMIDI(std::unique_ptr<RtMidiIn> &midiin, MIDIParser<EngineControls> &pa
     if (portNum > 0 && portNum <= midiin->getPortCount()) {
       try {
         midiin->openPort(portNum-1);
-        midiin->setCallback(midi_callback, static_cast<void*>(&parser));
+        midiin->setCallback(midi_callback, nullptr);
         midiin->ignoreTypes();
         opened = true;
       }
@@ -136,9 +135,8 @@ int main()
   RtAudio dac;
   std::unique_ptr<RtMidiIn> midiin;
 
-  EngineControls controls;
-  MIDIParser<EngineControls> parser;
   FeedbackSynthEngine engine;
+  FeedbackSynthControls controls;
 
   AudioCallbackData callbackData{engine, controls};
 
@@ -146,7 +144,7 @@ int main()
   engine.Init(static_cast<float>(kSampleRate));
 
   // Start MIDI
-  startMIDI(midiin, parser);
+  startMIDI(midiin);
 
   // Open DAC for Audio Output
   setupDAC(dac, callbackData);
@@ -154,10 +152,9 @@ int main()
   // Initialize controls
   // This should be done AFTER opening DAC but before starting stream
   // so that we are using the system-updated block size
-  controls.Init(static_cast<float>(kSampleRate), static_cast<size_t>(kBlockSize));
-  
-  // TODO: Move to function
-  controls.Register(FeedbackSynthEngine::ParamName::StringFreq, [&](float value){ engine.SetStringFreq(value); }, 1000.0f);
+  controls.Init(static_cast<float>(kSampleRate) / static_cast<float>(kBlockSize));
+  register_feedbacksynth_controls(controls, engine);
+  FeedbackSynthMIDIHandler::Init(&controls);
 
   // Start DAC output stream
   try {

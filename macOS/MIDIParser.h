@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INFS_MIDI_H
-#define INFS_MIDI_H
+#ifndef INFS_MIDIPARSER_H
+#define INFS_MIDIPARSER_H
 
 // The approach here is based on Pinechettes stmlib
 // https://github.com/pichenettes/stmlib/blob/master/midi/midi.h
@@ -22,10 +22,9 @@ class MIDIParser {
     using Message = std::vector<unsigned char>*;
 
     public:
-        MIDIParser() {};
-        ~MIDIParser() {};
+        MIDIParser() = delete;
 
-        void Parse(const Message message) const
+        static void Parse(const Message message)
         {
             const unsigned int nBytes = message->size();
             const unsigned char status = message->at(0) & 0xF0; 

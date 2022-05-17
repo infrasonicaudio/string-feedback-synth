@@ -6,38 +6,49 @@
 #include <map>
 #include <daisysp.h>
 
-#if !TARGET_MACOS
-#include <per/adc.h>
-#endif
-
 namespace infrasonic {
 
+/**
+ * @brief 
+ * Generic control parameter registry with built in update smoothing
+ * 
+ * @tparam ParamId Template parameter specifying the parameter ID type
+ */
 template<typename ParamId>
 class Controls {
     
     public:
 
-        using ParamCallback = std::function<void(const float)>;
+        using ParamHandler = std::function<void(const float)>;
 
         Controls() {};
         ~Controls() {};
 
-        void Init(const float sample_rate, const size_t block_size)
+        void Init(const float control_rate)
         {
-            control_rate_ = sample_rate / static_cast<float>(block_size);
+            control_rate_ = control_rate;
         }
 
-        void Register(const ParamId id, const ParamCallback callback, const float initial_value = 0.0f, const float smooth_time = 0.05f)
+        void Register(const ParamId id, const ParamHandler handler, const float initial_value = 0.0f, const float smooth_time = 0.05f)
         {
-            ParamState state(initial_value, smooth_coef(smooth_time, control_rate_), callback);
+            ParamState state(initial_value, smooth_coef(smooth_time, control_rate_), handler);
             param_states_.insert({id, state});
         }
 
-        void Update(const ParamID id, const float value, const bool immediate = false)
+        // Called in response to new control input. Updates target, does not apply value.
+        void Update(const ParamId id, const float value, const bool immediate = false)
         {
-
+            auto it = param_states_.find(id);
+            if (it != param_states_.end()) {
+                auto &state = it->second;
+                state.target = value;
+                if (immediate) {
+                    state.current = value;
+                }
+            }
         }
 
+        // Updates param values with smoothing and applies using handler.
         void Process()
         {
             for (auto &param : param_states_) {
@@ -53,23 +64,9 @@ class Controls {
                     }
                 }
 
-                state.callback(state.current);
+                state.handler(state.current);
             }
         }
-
-        #if TARGET_MACOS
-
-        // MIDI Handler
-        static void NoteOn(unsigned char channel, unsigned char nn, unsigned char velocity) {};
-        static void NoteOff(unsigned char channel, unsigned char nn, unsigned char velocity) {};
-        static void ControlChange(unsigned char channel, unsigned char cc, unsigned char value) {};
-
-        #else // Daisy Seed
-
-        // static void InitializeValues(daisy::AdcHandle &adc);
-        // static void UpdateValues(daisy::AdcHandle &adc);
-
-        #endif
     
     private:
 
@@ -78,15 +75,16 @@ class Controls {
         struct ParamState {
             float current;
             float target;
-            float smooth_coef;
-            ParamCallback callback;
+            
+            const float smooth_coef;
+            const ParamHandler handler;
 
             ParamState() = delete;
-            ParamState(const float initial, const float smooth_coef, const ParamCallback callback)
+            ParamState(const float initial, const float smooth_coef, const ParamHandler handler)
                 : current(initial)
                 , target(initial)
                 , smooth_coef(smooth_coef)
-                , callback(callback)
+                , handler(handler)
             {}
         };
 

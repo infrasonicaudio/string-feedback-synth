@@ -3,6 +3,7 @@
         "**/.gitmodules": true
     },
     "files.associations": {
-        "istream": "cpp"
+        "istream": "cpp",
+        "map": "cpp"
     }
 }

@@ -3,6 +3,9 @@
 #define IFS_FEEDBACK_SYNTH_ENGINE_H
 
 #include <daisysp.h>
+#if !TARGET_MACOS
+#include <dev/sdram.h>
+#endif
 
 namespace infrasonic {
 namespace FeedbackSynth {
@@ -11,8 +14,13 @@ class Engine {
 
     public:
 
-        Engine() {};
-        ~Engine() {};
+        // Singleton instance of synthesis engine.
+        // Implemented this way so the engine can own + use a static
+        // echo delay object with a long delay line, allocated in SDRAM
+        static Engine& instance() {
+            static Engine engine;
+            return engine;
+        }
 
         Engine(const Engine &other) = delete;
         Engine(Engine &&other) = delete;
@@ -40,7 +48,6 @@ class Engine {
         float sample_rate_;
         float fb_gain_ = 0.0f;
 
-
         float fb_delay_smooth_coef_;
         float fb_delay_samp_ = 64.f;
         float fb_delay_samp_target_ = 64.f;
@@ -52,6 +59,9 @@ class Engine {
         // TODO: Need to make generic 2-pole biquad filters
         daisysp::ATone fb_hpf_[2];
         // daisysp::Biquad fb_lpf_[2];
+
+        Engine() {};
+        ~Engine() {};
 };
 
 }

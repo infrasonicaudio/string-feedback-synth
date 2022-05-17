@@ -22,10 +22,7 @@ static unsigned int kBlockSize = 64;
 
 using namespace infrasonic;
 
-struct AudioCallbackData {
-  FeedbackSynth::Engine &engine;
-  FeedbackSynth::Controls &controls;
-};
+static FeedbackSynth::Controls controls;
 
 void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
 {
@@ -40,15 +37,14 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
   unsigned int i, j;
   float outL, outR;
   float *buffer = (float *) outputBuffer;
-  auto *data = static_cast<AudioCallbackData*>(userData);
 
-  data->controls.Process();
+  controls.Process();
 
   if ( status )
     std::cout << "Stream underflow detected!" << std::endl;
   // Write interleaved audio data.
   for ( i=0; i<nBufferFrames; i++ ) {
-    data->engine.Process(&outL, &outR);
+    FeedbackSynth::Engine::instance().Process(&outL, &outR);
     *buffer++ = outL;
     *buffer++ = outR;
   }
@@ -107,7 +103,7 @@ void startMIDI(std::unique_ptr<RtMidiIn> &midiin) {
   }
 }
 
-void setupDAC(RtAudio &dac, AudioCallbackData &callbackData) {
+void setupDAC(RtAudio &dac) {
 
   if ( dac.getDeviceCount() < 1 ) {
     std::cout << "\nNo audio devices found!\n";
@@ -122,7 +118,7 @@ void setupDAC(RtAudio &dac, AudioCallbackData &callbackData) {
 
   try {
     dac.openStream( &parameters, NULL, RTAUDIO_FLOAT32,
-                    kSampleRate, &kBlockSize, &audio_callback, static_cast<void*>(&callbackData));
+                    kSampleRate, &kBlockSize, &audio_callback, nullptr );
   }
   catch ( RtAudioError& e ) {
     e.printMessage();
@@ -135,25 +131,20 @@ int main()
   RtAudio dac;
   std::unique_ptr<RtMidiIn> midiin;
 
-  FeedbackSynth::Engine engine;
-  FeedbackSynth::Controls controls;
-
-  AudioCallbackData callbackData{engine, controls};
-
   // Init DSP classes
-  engine.Init(static_cast<float>(kSampleRate));
+  FeedbackSynth::Engine::instance().Init(static_cast<float>(kSampleRate));
 
   // Start MIDI
   startMIDI(midiin);
 
   // Open DAC for Audio Output
-  setupDAC(dac, callbackData);
+  setupDAC(dac);
 
   // Initialize controls
   // This should be done AFTER opening DAC but before starting stream
   // so that we are using the system-updated block size
   controls.Init(static_cast<float>(kSampleRate) / static_cast<float>(kBlockSize));
-  FeedbackSynth::register_controls(controls, engine);
+  FeedbackSynth::register_controls(controls, FeedbackSynth::Engine::instance());
   FeedbackSynth::MIDIHandler::Init(&controls);
 
   // Start DAC output stream

@@ -25,7 +25,16 @@ class Biquad2Pole {
 
         void SetQ(const float q);
 
-        float Process(const float in);
+        inline float Process(const float in)
+        {
+            // TODO: arm accelerated version
+
+            // Transposed direct form 2
+            float y = b0_ * in + s1_;
+            s1_ = s2_ + in * b1_ - a1_ * y;
+            s2_ = b2_ * in - a2_ * y;
+            return y;
+        }
 
     private:
 
@@ -38,7 +47,7 @@ class Biquad2Pole {
         float b0_, b1_, b2_, a1_, a2_;
 
         // state
-        // float x_1_, y_1_, s1_1_, s2_1_;
+        float s1_{0}, s2_{0};
 
         void updateCoefficients();
 };

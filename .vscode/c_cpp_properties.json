@@ -8,8 +8,7 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE",
-                "TARGET_MACOS=1"
+                "_UNICODE"
             ] ,
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",

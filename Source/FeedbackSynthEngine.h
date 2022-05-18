@@ -3,7 +3,7 @@
 #define IFS_FEEDBACK_SYNTH_ENGINE_H
 
 #include <daisysp.h>
-#if !TARGET_MACOS
+#ifdef __arm__
 #include <dev/sdram.h>
 #endif
 

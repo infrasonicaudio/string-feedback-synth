@@ -43,6 +43,5 @@ add_executable(
     ../Source/FeedbackSynthEngine.cpp
 )
 
-target_compile_definitions(feedbacksynth PRIVATE TARGET_MACOS=1)
 add_dependencies(feedbacksynth rtaudio rtmidi DaisySP)
 target_link_libraries(feedbacksynth rtaudio rtmidi DaisySP)

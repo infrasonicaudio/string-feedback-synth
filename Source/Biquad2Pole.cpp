@@ -1,6 +1,4 @@
 #include "Biquad2Pole.h"
-#include <iostream>
-#include <iomanip>
 #include <cmath>
 #include <daisysp.h>
 
@@ -50,6 +48,15 @@ void Biquad2Pole::updateCoefficients()
     const float Ksq = K * K;
 
     switch (filter_type_) {
+        case FilterType::HighPass:
+            norm = 1.0f / (1.0f + (K / q_) + Ksq);
+            b0_ = norm;
+            b1_ = -2.0f * b0_;
+            b2_ = b0_;
+            a1_ = 2.0f * (Ksq - 1.0f) * norm;
+            a2_ = (1.0f - (K / q_) + Ksq) * norm; 
+            break;
+
         default: // lowpass
             norm = 1.0f / (1.0f + (K / q_) + Ksq);
             b0_ = Ksq * norm;
@@ -60,26 +67,13 @@ void Biquad2Pole::updateCoefficients()
             break;
     }
 
-    // --- MusicDSP "eq cookbook" version for lowpass - not sure if this performs better or not --
-
-    // float w0 = cutoff_hz_ * (2.0f * PI_F * Ts_);
-    // float sinW0 = sinf(w0);
-    // float alpha = sinW0 / (q_ * 2.0f);
-    // float cosW0 = cosf(w0);
-    // float scale = 1.0f / (1.0f + alpha);
-    // b0_ = ((1.0f - cosW0) / 2.0f) * scale;
-    // b1_ = (1.0f - cosW0) * scale;
-    // b2_ = b0_;
-    // a1_ = (-2.0f * cosW0) * scale;
-    // a2_ = (1.0f - alpha) * scale;
-
-    std::cout << std::setprecision(5) 
-        << "\nCoefs for f = " << cutoff_hz_ << " and q = " << q_ << "\n"
-        << "  b0 = " << b0_ << "\n"
-        << "  b1 = " << b1_ << "\n"
-        << "  b2 = " << b2_ << "\n"
-        << "  a1 = " << a1_ << "\n"
-        << "  a2 = " << a2_ << "\n"
-        << "\n";
+    // std::cout << std::setprecision(5) 
+    //     << "\nCoefs for f = " << cutoff_hz_ << " and q = " << q_ << "\n"
+    //     << "  b0 = " << b0_ << "\n"
+    //     << "  b1 = " << b1_ << "\n"
+    //     << "  b2 = " << b2_ << "\n"
+    //     << "  a1 = " << a1_ << "\n"
+    //     << "  a2 = " << a2_ << "\n"
+    //     << "\n";
 }
 

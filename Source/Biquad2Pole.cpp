@@ -38,6 +38,14 @@ void Biquad2Pole::SetQ(const float q)
     updateCoefficients();
 }
 
+void Biquad2Pole::SetParams(const FilterType type, const float cutoff_hz, const float q)
+{
+    filter_type_ = type;
+    cutoff_hz_ = daisysp::fclamp(cutoff_hz, 1.f, sample_rate_ * 0.5f);
+    q_ = daisysp::fmax(q, 0.1f);
+    updateCoefficients();
+}
+
 void Biquad2Pole::updateCoefficients()
 {
     float norm;
@@ -52,6 +60,15 @@ void Biquad2Pole::updateCoefficients()
             b2_ = b0_;
             a1_ = 2.0f * (Ksq - 1.0f) * norm;
             a2_ = (1.0f - (K / q_) + Ksq) * norm; 
+            break;
+
+        case FilterType::BandPass:
+            norm = 1.0f / (1.0f + (K / q_) + Ksq);
+            b0_ = (K / q_) * norm;
+            b1_ = 0.0f;
+            b2_ = -b0_;
+            a1_ = 2.0f * (Ksq - 1) * norm;
+            a2_ = (1.0f - (K / q_) + Ksq) * norm;
             break;
 
         default: // lowpass

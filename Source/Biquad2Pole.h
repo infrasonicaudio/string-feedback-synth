@@ -18,7 +18,8 @@ class Biquad2Pole {
 
         enum class FilterType {
             LowPass,
-            HighPass   
+            HighPass,
+            BandPass
         };
 
         Biquad2Pole() {}
@@ -26,17 +27,23 @@ class Biquad2Pole {
 
         void Init(const float sample_rate);
 
-        // Individual param update methods will recalculate coefficients every time
+        // Individual param update methods recalculate coefficients
+        // every time one of them is called. To update everything at once,
+        // use SetParams()
+
         void SetFilterType(const FilterType type);
         void SetCutoff(const float cutoff_hz);
         void SetQ(const float q);
+
+        /// Update all params simultaneously, recalculating coefficients only once 
+        void SetParams(const FilterType type, const float cutoff_hz, const float q);
 
         inline float Process(const float in)
         {
             return process(in, 0);
         }
 
-        // In-place stereo processing
+        /// In-place stereo processing
         inline void ProcessStereo(float &sampL, float &sampR)
         {
             sampL = process(sampL, 0);

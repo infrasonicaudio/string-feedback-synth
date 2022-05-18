@@ -9,9 +9,6 @@
     #define BQ_TANF(x) tanf(x)
 #endif
 
-// #define BQ_COSF(x) cosf(x)
-// #define BQ_SINF(x) sinf(x)
-
 using namespace infrasonic;
 
 void Biquad2Pole::Init(float sample_rate)

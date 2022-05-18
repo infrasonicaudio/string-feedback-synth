@@ -42,7 +42,7 @@ class ControlsRegistry {
             auto it = param_states_.find(id);
             if (it != param_states_.end()) {
                 auto &state = it->second;
-                auto clampedValue = DSY_CLAMP(value, state.min, state.max);
+                auto clampedValue = daisysp::fclamp(value, state.min, state.max);
                 state.target = clampedValue;
                 if (immediate) {
                     state.current = clampedValue;
@@ -55,7 +55,7 @@ class ControlsRegistry {
             auto it = param_states_.find(id);
             if (it != param_states_.end()) {
                 auto &state = it->second;
-                auto mappedValue = daisysp::fmap(DSY_CLAMP(normValue, 0.0f, 1.0f), state.min, state.max, curve);
+                auto mappedValue = daisysp::fmap(daisysp::fclamp(normValue, 0.0f, 1.0f), state.min, state.max, curve);
                 state.target = mappedValue;
                 if (immediate) {
                     state.current = mappedValue;

@@ -4,6 +4,13 @@
 #include <cmath>
 #include <daisysp.h>
 
+#ifdef __arm__
+    #include <arm_math.h>
+    #define BQ_TANF(x) (arm_sin_f32(x) / arm_cos_f32(x))
+#else
+    #define BQ_TANF(x) tanf(x)
+#endif
+
 // #define BQ_COSF(x) cosf(x)
 // #define BQ_SINF(x) sinf(x)
 
@@ -39,7 +46,7 @@ void Biquad2Pole::SetQ(const float q)
 void Biquad2Pole::updateCoefficients()
 {
     float norm;
-    const float K = tanf(PI_F * cutoff_hz_ * Ts_);
+    const float K = BQ_TANF(PI_F * cutoff_hz_ * Ts_);
     const float Ksq = K * K;
 
     switch (filter_type_) {
@@ -52,6 +59,19 @@ void Biquad2Pole::updateCoefficients()
             a2_ = (1.0f - (K / q_) + Ksq) * norm; 
             break;
     }
+
+    // --- MusicDSP "eq cookbook" version for lowpass - not sure if this performs better or not --
+
+    // float w0 = cutoff_hz_ * (2.0f * PI_F * Ts_);
+    // float sinW0 = sinf(w0);
+    // float alpha = sinW0 / (q_ * 2.0f);
+    // float cosW0 = cosf(w0);
+    // float scale = 1.0f / (1.0f + alpha);
+    // b0_ = ((1.0f - cosW0) / 2.0f) * scale;
+    // b1_ = (1.0f - cosW0) * scale;
+    // b2_ = b0_;
+    // a1_ = (-2.0f * cosW0) * scale;
+    // a2_ = (1.0f - alpha) * scale;
 
     std::cout << std::setprecision(5) 
         << "\nCoefs for f = " << cutoff_hz_ << " and q = " << q_ << "\n"

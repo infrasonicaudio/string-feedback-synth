@@ -39,6 +39,7 @@ include_directories(../Source)
 add_executable(
     feedbacksynth
     FeedbackSynth_macos.cpp
+    ../Source/Biquad2Pole.cpp
     ../Source/FeedbackSynthEngine.cpp
 )
 

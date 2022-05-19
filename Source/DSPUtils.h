@@ -2,7 +2,11 @@
 #ifndef INFS_DSPUTILS_H
 #define INFS_DSPUTILS_H
 
+#include <cmath>
 #include <Utility/dsp.h>
+#ifdef __arm__
+#include <arm_math.h>
+#endif
 
 namespace infrasonic {
 
@@ -20,6 +24,17 @@ inline float onepole_coef(float time_s, float sample_rate) {
         return 1.0f;
 
     return 1.0f / (time_s * sample_rate);
+}
+
+inline float tanf(const float x)
+{
+#ifdef __arm__
+    float s, c;
+    arm_sin_cos_f32(x, &s, &c);
+    return s / c;
+#else
+    return std::tanf(x);
+#endif
 }
 
 }

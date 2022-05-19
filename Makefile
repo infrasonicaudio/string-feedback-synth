@@ -9,8 +9,7 @@ C_INCLUDES = \
 
 C_SOURCES = \
 	lib/libDaisy/Drivers/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
-	lib/libDaisy/Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_cos_f32.c \
-	lib/libDaisy/Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_sin_f32.c
+	lib/libDaisy/Drivers/CMSIS/DSP/Source/ControllerFunctions/arm_sin_cos_f32.c
 
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \

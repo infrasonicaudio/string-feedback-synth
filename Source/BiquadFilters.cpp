@@ -1,12 +1,6 @@
 #include "BiquadFilters.h"
 #include <cmath>
-
-#ifdef __arm__
-    #include <arm_math.h>
-    #define BQ_TANF(x) (arm_sin_f32(x) / arm_cos_f32(x))
-#else
-    #define BQ_TANF(x) tanf(x)
-#endif
+#include "DSPUtils.h"
 
 using namespace infrasonic;
 
@@ -17,7 +11,7 @@ const BiquadSection::Coefficients BiquadSection::CalculateCoefficients(const Fil
 {
    Coefficients coefs; 
     float norm;
-    const float K = BQ_TANF(PI_F * cutoff_hz * (1.0f / sample_rate));
+    const float K = infrasonic::tanf(PI_F * cutoff_hz * (1.0f / sample_rate));
     const float Ksq = K * K;
 
     float &b0 = coefs[0];

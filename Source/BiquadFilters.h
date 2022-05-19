@@ -56,7 +56,6 @@ class BiquadSection {
         }
 
     private:
-
         // coef
         Coefficients coefs_{0, 0, 0, 0, 0};
 

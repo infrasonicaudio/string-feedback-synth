@@ -66,7 +66,8 @@ class BiquadSection {
 
 };
 
-// Templated cascaded butterworth biquad filter
+/// Templated cascaded butterworth biquad filter.
+/// NOTE: Only supports even-ordered filters.
 template<size_t NumSections, BiquadSection::FilterType FilterType>
 class BiquadCascade {
 
@@ -81,8 +82,7 @@ class BiquadCascade {
         void Init(const float sample_rate) {
             sample_rate_ = sample_rate;
             cutoff_hz_ = sample_rate * 0.25f;
-            q_ = 0.70710678118f; // sqrt(2)/2 = "flat" for 2nd order
-            updateCoefficients();
+            SetFlatResponse();
         }
 
         inline void SetCutoff(const float cutoff_hz)
@@ -102,6 +102,17 @@ class BiquadCascade {
         {
             cutoff_hz_ = daisysp::fclamp(cutoff_hz, 1.f, sample_rate_ * 0.5f);
             q_ = daisysp::fmax(q, 0.1f);
+            updateCoefficients();
+        }
+
+        /// Sets Q values in each section for a truly "flat" (-3dB cutoff point) response
+        /// NOTE: per limitations of this class this only works for even-order filters
+        inline void SetFlatResponse()
+        {
+            const float angleIncrement = 1.f / (4.f * static_cast<float>(NumSections));
+            for (size_t i=0; i<NumSections; i++) {
+                q_[i] = 1.f / (2.f * cosf(PI_F * (angleIncrement * (i * 2 + 1))));
+            }
             updateCoefficients();
         }
 
@@ -126,13 +137,13 @@ class BiquadCascade {
     private:
 
         float sample_rate_;
-        float cutoff_hz_, q_;
+        float cutoff_hz_, q_[NumSections];
 
         std::array<BiquadSection, NumSections> biquads_;
 
         inline void updateCoefficients() {
-            for (auto &biquad : biquads_) {
-                biquad.SetCoefficients(BiquadSection::CalculateCoefficients(FilterType, sample_rate_, cutoff_hz_, q_));
+            for (size_t i=0; i<NumSections; i++) {
+                biquads_[i].SetCoefficients(BiquadSection::CalculateCoefficients(FilterType, sample_rate_, cutoff_hz_, q_[i]));
             }
         }
 };

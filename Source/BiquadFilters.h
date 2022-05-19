@@ -124,7 +124,7 @@ class BiquadCascade {
         {
             float out = in;
             for (auto &biquad : biquads_) {
-                out = biquad.Process(in, 0);
+                out = biquad.Process(out, 0);
             }
             return out;
         }

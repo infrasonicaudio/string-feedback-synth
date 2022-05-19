@@ -9,7 +9,7 @@
 namespace infrasonic {
 
 /**
- *  Single precision 2nd order Butterworth biquad filter section with support for stereo processing.
+ *  Single precision 2nd order biquad filter section with support for stereo processing.
  *  NOTE: There are templated filter definitions at the bottom of this file for convenience. 
  */
 class BiquadSection {
@@ -66,7 +66,7 @@ class BiquadSection {
 
 };
 
-/// Templated cascaded butterworth biquad filter.
+/// Templated cascaded biquad filter. Filter Order = 2 * NumSections.
 /// NOTE: Only supports even-ordered filters.
 template<size_t NumSections, BiquadSection::FilterType FilterType>
 class BiquadCascade {
@@ -154,23 +154,23 @@ class BiquadCascade {
         }
 };
 
-/// 12dB/Oct resonant lowpass filter (butterworth topology)
-using ButterworthLP12 = BiquadCascade<1, BiquadSection::FilterType::LowPass>;
+/// 12dB/Oct resonant lowpass filter
+using LPF12 = BiquadCascade<1, BiquadSection::FilterType::LowPass>;
 
-/// 24dB/Oct resonant lowpass filter (butterworth topology)
-using ButterworthLP24 = BiquadCascade<2, BiquadSection::FilterType::LowPass>;
+/// 24dB/Oct resonant lowpass filter
+using LPF24 = BiquadCascade<2, BiquadSection::FilterType::LowPass>;
 
-/// 12dB/Oct resonant highpass filter (butterworth topology)
-using ButterworthHP12 = BiquadCascade<1, BiquadSection::FilterType::HighPass>;
+/// 12dB/Oct resonant highpass filter
+using HPF12 = BiquadCascade<1, BiquadSection::FilterType::HighPass>;
 
-/// 24dB/Oct resonant highpass filter (butterworth topology)
-using ButterworthHP24 = BiquadCascade<2, BiquadSection::FilterType::HighPass>;
+/// 24dB/Oct resonant highpass filter
+using HPF24 = BiquadCascade<2, BiquadSection::FilterType::HighPass>;
 
-/// 12dB/Oct resonant bandpass filter (butterworth topology)
-using ButterworthBP12 = BiquadCascade<1, BiquadSection::FilterType::BandPass>;
+/// 12dB/Oct resonant bandpass filter
+using BPF12 = BiquadCascade<1, BiquadSection::FilterType::BandPass>;
 
-/// 24dB/Oct resonant bandpass filter (butterworth topology)
-using ButterworthBP24 = BiquadCascade<2, BiquadSection::FilterType::BandPass>;
+/// 24dB/Oct resonant bandpass filter
+using BPF24 = BiquadCascade<2, BiquadSection::FilterType::BandPass>;
 
 }
 

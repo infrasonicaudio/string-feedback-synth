@@ -3,6 +3,8 @@
 #define IFS_FEEDBACK_SYNTH_ENGINE_H
 
 #include <daisysp.h>
+#include "BiquadFilters.h"
+
 #ifdef __arm__
 #include <dev/sdram.h>
 #endif
@@ -34,12 +36,10 @@ class Engine {
         void SetFeedbackGain(const float gain_dbfs);
 
         void SetFeedbackDelay(const float delay_s);
-
+        void SetFeedbackLPFCutoff(const float cutoff_hz);
         void SetFeedbackHPFCutoff(const float cutoff_hz);
 
-        // void SetFeedbackLPFCutoff(const float cutoff_hz);
-
-        void Process(float *outL, float *outR);
+        void Process(float &outL, float &outR);
 
     private:
         // long enough for 250ms at 48kHz
@@ -56,9 +56,8 @@ class Engine {
         daisysp::String strings_[2];
         daisysp::DelayLine<float, kMaxFeedbackDelaySamp> fb_delayline_[2];
 
-        // TODO: Write generic 2-pole biquad filters
-        daisysp::ATone fb_hpf_[2];
-        // daisysp::Biquad fb_lpf_[2];
+        LPF24 fb_lpf_;
+        HPF24 fb_hpf_;
 
         Engine() {};
         ~Engine() {};

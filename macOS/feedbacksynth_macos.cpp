@@ -44,7 +44,7 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
     std::cout << "Stream underflow detected!" << std::endl;
   // Write interleaved audio data.
   for ( i=0; i<nBufferFrames; i++ ) {
-    FeedbackSynth::Engine::instance().Process(&outL, &outR);
+    FeedbackSynth::Engine::instance().Process(outL, outR);
     *buffer++ = outL;
     *buffer++ = outR;
   }

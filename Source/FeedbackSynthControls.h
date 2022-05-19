@@ -12,7 +12,9 @@ namespace FeedbackSynth {
 enum class ControlParam {
     StringPitch,
     FeedbackGain,
-    FeedbackDelay
+    FeedbackDelay,
+    FeedbackLPFCutoff,
+    FeedbackHPFCutoff
 };
 
 using Controls = ControlsRegistry<ControlParam>;
@@ -21,13 +23,17 @@ static void register_controls(Controls &controls, Engine &engine) {
     using namespace std::placeholders;
 
     // Pitch as nn
-    controls.Register(ControlParam::StringPitch, 40.0f, 20.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1), 0.2f);
+    controls.Register(ControlParam::StringPitch, 40.0f, 24.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1), 0.2f);
 
     // Feedback Gain in dbFS
     controls.Register(ControlParam::FeedbackGain, -50.0f, -50.0f, 6.0f, std::bind(&Engine::SetFeedbackGain, &engine, _1));
 
     // Feedback delay in seconds
     controls.Register(ControlParam::FeedbackDelay, 0.001f, 0.001f, 0.2f, std::bind(&Engine::SetFeedbackDelay, &engine, _1));
+
+    // Feedback filter cutoff in hz
+    controls.Register(ControlParam::FeedbackLPFCutoff, 18000.0f, 100.0f, 18000.0f, std::bind(&Engine::SetFeedbackLPFCutoff, &engine, _1));
+    controls.Register(ControlParam::FeedbackHPFCutoff, 250.0f, 32.0f, 1000.0f, std::bind(&Engine::SetFeedbackHPFCutoff, &engine, _1));
 }
 
 }

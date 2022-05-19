@@ -45,6 +45,14 @@ class MIDIHandler {
                 case CCParam::StringPitch:
                     controls_->UpdateNormalized(ControlParam::StringPitch, value_norm);
                     break;
+
+                case CCParam::FeedbackLPFCutoff:
+                    controls_->UpdateNormalized(ControlParam::FeedbackLPFCutoff, value_norm, false, daisysp::Mapping::EXP);
+                    break;
+
+                case CCParam::FeedbackHPFCutoff:
+                    controls_->UpdateNormalized(ControlParam::FeedbackHPFCutoff, value_norm, false, daisysp::Mapping::EXP);
+                    break;
                 
                 default:
                     break;
@@ -54,9 +62,11 @@ class MIDIHandler {
     private:
 
         enum class CCParam: unsigned char {
+            StringPitch     = 102,
             FeedbackGain    = 26,
             FeedbackDelay   = 29,
-            StringPitch     = 102
+            FeedbackLPFCutoff = 105,
+            FeedbackHPFCutoff = 106
         };
 
         inline static Controls *controls_ = nullptr;

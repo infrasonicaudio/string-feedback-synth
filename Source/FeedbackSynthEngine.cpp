@@ -21,12 +21,15 @@ void Engine::Init(const float sample_rate)
         strings_[i].SetDamping(0.5f);
 
         fb_delayline_[i].Init();
-
-        fb_hpf_[i].Init(sample_rate);
-
-        float hpcutoff = 250.0f;
-        fb_hpf_[i].SetFreq(hpcutoff);
     }
+
+    fb_lpf_.Init(sample_rate);
+    fb_lpf_.SetFlatResponse();
+    fb_lpf_.SetCutoff(18000.0f);
+
+    fb_hpf_.Init(sample_rate);
+    fb_hpf_.SetFlatResponse();
+    fb_hpf_.SetCutoff(60.f);
 }
 
 void Engine::SetStringPitch(const float nn)
@@ -46,7 +49,17 @@ void Engine::SetFeedbackDelay(const float delay_s)
     fb_delay_samp_target_ = DSY_CLAMP(delay_s * sample_rate_, 1.0f, static_cast<float>(kMaxFeedbackDelaySamp - 1));
 }
 
-void Engine::Process(float *outL, float *outR)
+void Engine::SetFeedbackLPFCutoff(const float cutoff_hz)
+{
+    fb_lpf_.SetCutoff(cutoff_hz);
+}
+
+void Engine::SetFeedbackHPFCutoff(const float cutoff_hz)
+{
+    fb_hpf_.SetCutoff(cutoff_hz);
+}
+
+void Engine::Process(float &outL, float &outR)
 {
     // --- Update audio-rate-smoothed control params ---
 
@@ -66,16 +79,16 @@ void Engine::Process(float *outL, float *outR)
 
     // Distort + Clip
     // TODO: Oversample this? Another distortion algo maybe?
-    sampL = SoftClip(sampL * 4.0f);
-    sampR = SoftClip(sampR * 4.0f);
+    sampL = SoftClip(sampL * dbfs2lin(12.0f));
+    sampR = SoftClip(sampR * dbfs2lin(12.0f));
 
-    // TODO: HP/LP Filter
-    sampL = fb_hpf_[0].Process(sampL);
-    sampR = fb_hpf_[1].Process(sampR);
+    // Filter in feedback loop
+    fb_lpf_.ProcessStereo(sampL, sampR);
+    fb_hpf_.ProcessStereo(sampL, sampR);
 
     // Tap to output 
-    *outL = sampL * 0.1f;
-    *outR = sampR * 0.1f;
+    outL = sampL * 0.1f;
+    outR = sampR * 0.1f;
 
     // TODO: Allpass
 

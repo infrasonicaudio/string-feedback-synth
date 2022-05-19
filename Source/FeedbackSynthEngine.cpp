@@ -24,11 +24,11 @@ void Engine::Init(const float sample_rate)
     }
 
     fb_lpf_.Init(sample_rate);
-    fb_lpf_.SetFlatResponse();
+    fb_lpf_.SetQ(1.f);
     fb_lpf_.SetCutoff(18000.0f);
 
     fb_hpf_.Init(sample_rate);
-    fb_hpf_.SetFlatResponse();
+    fb_hpf_.SetQ(1.f);
     fb_hpf_.SetCutoff(60.f);
 }
 

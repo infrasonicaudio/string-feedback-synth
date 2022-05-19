@@ -33,7 +33,7 @@ static void register_controls(Controls &controls, Engine &engine) {
 
     // Feedback filter cutoff in hz
     controls.Register(ControlParam::FeedbackLPFCutoff, 18000.0f, 100.0f, 18000.0f, std::bind(&Engine::SetFeedbackLPFCutoff, &engine, _1));
-    controls.Register(ControlParam::FeedbackHPFCutoff, 250.0f, 32.0f, 1000.0f, std::bind(&Engine::SetFeedbackHPFCutoff, &engine, _1));
+    controls.Register(ControlParam::FeedbackHPFCutoff, 250.0f, 32.0f, 8000.0f, std::bind(&Engine::SetFeedbackHPFCutoff, &engine, _1));
 }
 
 }

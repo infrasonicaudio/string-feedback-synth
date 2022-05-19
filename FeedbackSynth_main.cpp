@@ -19,7 +19,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     auto& engine = FeedbackSynth::Engine::instance();
     controls.Process();
     for (size_t i=0; i<size; i++) {
-        engine.Process(&OUT_L[i], &OUT_R[i]);
+        engine.Process(OUT_L[i], OUT_R[i]);
     }
 }
 

@@ -1,17 +1,22 @@
 # Project Name
 TARGET = FeedbackSynth
 
-# Includes
+C_DEFS = \
+	-DUSE_ARM_DSP
+
 C_INCLUDES = \
 	-ISource/
 
-# Sources
+C_SOURCES = \
+	lib/libDaisy/Drivers/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
+	lib/libDaisy/Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_cos_f32.c \
+	lib/libDaisy/Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_sin_f32.c
+
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
 	Source/BiquadFilters.cpp \
 	Source/FeedbackSynthEngine.cpp
 
-# Library Locations
 LIBDAISY_DIR = lib/libDaisy
 DAISYSP_DIR = lib/DaisySP
 

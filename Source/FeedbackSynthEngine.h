@@ -52,12 +52,12 @@ class Engine {
         float fb_delay_samp_ = 64.f;
         float fb_delay_samp_target_ = 64.f;
 
+        // TODO: Should ideally be pink noise
         daisysp::WhiteNoise noise_;
         daisysp::String strings_[2];
         daisysp::DelayLine<float, kMaxFeedbackDelaySamp> fb_delayline_[2];
-
-        LPF24 fb_lpf_;
-        HPF24 fb_hpf_;
+        LPF12 fb_lpf_;
+        HPF12 fb_hpf_;
 
         Engine() {};
         ~Engine() {};

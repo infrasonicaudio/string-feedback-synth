@@ -93,7 +93,9 @@ class BiquadCascade {
 
         inline void SetQ(const float q)
         {
-            q_ = daisysp::fmax(q, 0.1f);
+            for (size_t i=0; i<NumSections; i++) {
+                q_[i] = daisysp::fmax(q, 0.1f);
+            }
             updateCoefficients();
         }
 
@@ -101,7 +103,9 @@ class BiquadCascade {
         inline void SetParams(const float cutoff_hz, const float q)
         {
             cutoff_hz_ = daisysp::fclamp(cutoff_hz, 1.f, sample_rate_ * 0.5f);
-            q_ = daisysp::fmax(q, 0.1f);
+            for (size_t i=0; i<NumSections; i++) {
+                q_ = daisysp::fmax(q, 0.1f);
+            }
             updateCoefficients();
         }
 

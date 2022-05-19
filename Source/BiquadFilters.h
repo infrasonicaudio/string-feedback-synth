@@ -71,6 +71,8 @@ class BiquadSection {
 template<size_t NumSections, BiquadSection::FilterType FilterType>
 class BiquadCascade {
 
+    static_assert(NumSections > 0, "Must have at least one section");
+
     public:
         BiquadCascade() {}
         ~BiquadCascade() {}

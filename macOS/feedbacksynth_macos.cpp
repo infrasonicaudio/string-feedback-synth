@@ -15,7 +15,6 @@
 #include "FeedbackSynthControls.h"
 #include "FeedbackSynthMIDIHandler.h"
 #include "MIDIParser.h"
-#include "Biquad2Pole.h"
 
 static const unsigned int kSampleRate = 48000;
 static const unsigned int kNumChannels = 2;

@@ -8,7 +8,7 @@ C_INCLUDES = \
 # Sources
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
-	Source/Biquad2Pole.cpp \
+	Source/BiquadFilters.cpp \
 	Source/FeedbackSynthEngine.cpp
 
 # Library Locations

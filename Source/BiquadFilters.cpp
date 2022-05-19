@@ -1,4 +1,4 @@
-#include "Biquad2Pole.h"
+#include "BiquadFilters.h"
 #include <cmath>
 #include <daisysp.h>
 

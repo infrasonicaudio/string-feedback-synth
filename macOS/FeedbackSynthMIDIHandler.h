@@ -2,6 +2,8 @@
 #ifndef INFS_FEEDBACKSYNTHMIDIHANDLER_H
 #define INFS_FEEDBACKSYNTHMIDIHANDLER_H
 
+#include "FeedbackSynthControls.h"
+
 namespace infrasonic {
 namespace FeedbackSynth {
 

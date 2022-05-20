@@ -21,6 +21,11 @@ void Engine::Init(const float sample_rate)
         strings_[i].SetDamping(0.5f);
 
         fb_delayline_[i].Init();
+
+        echo_delay_[i].Init(sample_rate);
+        echo_delay_[i].SetDelayTime(5.0f, true);
+        echo_delay_[i].SetFeedback(0.5f);
+        echo_delay_[i].SetLagTime(0.5f);
     }
 
     fb_lpf_.Init(sample_rate);
@@ -59,6 +64,19 @@ void Engine::SetFeedbackHPFCutoff(const float cutoff_hz)
     fb_hpf_.SetCutoff(cutoff_hz);
 }
 
+void Engine::SetEchoDelayTime(const float echo_time)
+{
+    // TODO: ping pong mode?
+    echo_delay_[0].SetDelayTime(echo_time);
+    echo_delay_[1].SetDelayTime(echo_time);
+}
+
+void Engine::SetEchoDelayFeedback(const float echo_fb)
+{
+    echo_delay_[0].SetFeedback(echo_fb);
+    echo_delay_[1].SetFeedback(echo_fb);
+}
+
 void Engine::Process(float &outL, float &outR)
 {
     // --- Update audio-rate-smoothed control params ---
@@ -68,6 +86,8 @@ void Engine::Process(float &outL, float &outR)
     // --- Process Samples ---
 
     const float noise_samp = noise_.Process();
+
+    // ---> Feedback Loop
 
     // Get noise + feedback output
     float inL = fb_delayline_[0].Read(fb_delay_samp_) + noise_samp; 
@@ -86,13 +106,18 @@ void Engine::Process(float &outL, float &outR)
     fb_lpf_.ProcessStereo(sampL, sampR);
     fb_hpf_.ProcessStereo(sampL, sampR);
 
-    // Tap to output 
-    outL = sampL * 0.1f;
-    outR = sampR * 0.1f;
-
-    // TODO: Allpass
-
     // Write back into delay with attenuation
     fb_delayline_[0].Write(sampL * fb_gain_);
     fb_delayline_[1].Write(sampR * fb_gain_);
+
+    // ---> Output
+
+    sampL = sampL * 0.75f + echo_delay_[0].Process(sampL) * 0.25f;
+    sampR = sampR * 0.75f + echo_delay_[1].Process(sampR) * 0.25f;
+
+    outL = sampL * 0.05f;
+    outR = sampR * 0.05f;
+
+    // TODO: Allpass
+
 }

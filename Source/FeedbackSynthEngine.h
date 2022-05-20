@@ -4,6 +4,7 @@
 
 #include <daisysp.h>
 #include "BiquadFilters.h"
+#include "EchoDelay.h"
 
 #ifdef __arm__
 #include <dev/sdram.h>
@@ -18,16 +19,14 @@ class Engine {
 
         // Singleton instance of synthesis engine.
         // Implemented this way so the engine can own + use a static
-        // echo delay object with a long delay line, allocated in SDRAM
+        // echo delay object with a long delay line, allocated in SDRAM.
+        // 
+        //   - A better approach would be to either link so the heap
+        //     goes to SDRAM, or create an aligned memory allocator to SDRAM
         static Engine& instance() {
             static Engine engine;
             return engine;
         }
-
-        Engine(const Engine &other) = delete;
-        Engine(Engine &&other) = delete;
-        Engine& operator=(const Engine &other) = delete;
-        Engine& operator=(Engine &&other) = delete;
 
         void Init(const float sample_rate);
 
@@ -39,11 +38,16 @@ class Engine {
         void SetFeedbackLPFCutoff(const float cutoff_hz);
         void SetFeedbackHPFCutoff(const float cutoff_hz);
 
+        void SetEchoDelayTime(const float echo_time);
+        void SetEchoDelayFeedback(const float echo_fb);
+
         void Process(float &outL, float &outR);
 
     private:
         // long enough for 250ms at 48kHz
         static constexpr size_t kMaxFeedbackDelaySamp = 12000;
+        // long enough for 5s at 48kHz
+        static constexpr size_t kMaxEchoDelaySamp = 48000 * 5;
 
         float sample_rate_;
         float fb_gain_ = 0.0f;
@@ -56,11 +60,19 @@ class Engine {
         daisysp::WhiteNoise noise_;
         daisysp::String strings_[2];
         daisysp::DelayLine<float, kMaxFeedbackDelaySamp> fb_delayline_[2];
+
         LPF12 fb_lpf_;
         HPF12 fb_hpf_;
 
+        EchoDelay<kMaxEchoDelaySamp> echo_delay_[2];
+
         Engine() {};
         ~Engine() {};
+
+        Engine(const Engine &other) = delete;
+        Engine(Engine &&other) = delete;
+        Engine& operator=(const Engine &other) = delete;
+        Engine& operator=(Engine &&other) = delete;
 };
 
 }

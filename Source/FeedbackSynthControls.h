@@ -14,7 +14,9 @@ enum class ControlParam {
     FeedbackGain,
     FeedbackDelay,
     FeedbackLPFCutoff,
-    FeedbackHPFCutoff
+    FeedbackHPFCutoff,
+    EchoDelayTime,
+    EchoDelayFeedback
 };
 
 using Controls = ControlsRegistry<ControlParam>;
@@ -34,6 +36,12 @@ static void register_controls(Controls &controls, Engine &engine) {
     // Feedback filter cutoff in hz
     controls.Register(ControlParam::FeedbackLPFCutoff, 18000.0f, 100.0f, 18000.0f, std::bind(&Engine::SetFeedbackLPFCutoff, &engine, _1));
     controls.Register(ControlParam::FeedbackHPFCutoff, 250.0f, 32.0f, 8000.0f, std::bind(&Engine::SetFeedbackHPFCutoff, &engine, _1));
+
+    // Delay time in s
+    controls.Register(ControlParam::EchoDelayTime, 0.5f, 0.05f, 5.0f, std::bind(&Engine::SetEchoDelayTime, &engine, _1));
+
+    // Delay feedback
+    controls.Register(ControlParam::EchoDelayFeedback, 0.0f, 0.0f, 1.2f, std::bind(&Engine::SetEchoDelayFeedback, &engine, _1));
 }
 
 }

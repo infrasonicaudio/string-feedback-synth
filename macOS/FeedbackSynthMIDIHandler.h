@@ -53,6 +53,14 @@ class MIDIHandler {
                 case CCParam::FeedbackHPFCutoff:
                     controls_->UpdateNormalized(ControlParam::FeedbackHPFCutoff, value_norm, false, daisysp::Mapping::EXP);
                     break;
+
+                case CCParam::EchoDelayTime:
+                    controls_->UpdateNormalized(ControlParam::EchoDelayTime, value_norm, false, daisysp::Mapping::EXP);
+                    break;
+
+                case CCParam::EchoDelayFeedback:
+                    controls_->UpdateNormalized(ControlParam::EchoDelayFeedback, value_norm);
+                    break;
                 
                 default:
                     break;
@@ -66,7 +74,9 @@ class MIDIHandler {
             FeedbackGain    = 26,
             FeedbackDelay   = 29,
             FeedbackLPFCutoff = 105,
-            FeedbackHPFCutoff = 106
+            FeedbackHPFCutoff = 106,
+            EchoDelayTime   = 28,
+            EchoDelayFeedback = 24
         };
 
         inline static Controls *controls_ = nullptr;

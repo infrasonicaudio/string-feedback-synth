@@ -15,7 +15,7 @@ void Engine::Init(const float sample_rate)
     for (unsigned int i=0; i<2; i++) {
 
         strings_[i].Init(sample_rate);
-        strings_[i].SetBrightness(0.95f);
+        strings_[i].SetBrightness(0.85f);
         strings_[i].SetNonLinearity(0.0f);
         strings_[i].SetFreq(mtof(40.0f));
         strings_[i].SetDamping(0.5f);

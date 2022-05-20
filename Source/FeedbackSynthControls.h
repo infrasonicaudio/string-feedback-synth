@@ -28,7 +28,7 @@ static void register_controls(Controls &controls, Engine &engine) {
     controls.Register(ControlParam::StringPitch, 40.0f, 24.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1), 0.2f);
 
     // Feedback Gain in dbFS
-    controls.Register(ControlParam::FeedbackGain, -50.0f, -50.0f, 6.0f, std::bind(&Engine::SetFeedbackGain, &engine, _1));
+    controls.Register(ControlParam::FeedbackGain, -60.0f, -60.0f, 12.0f, std::bind(&Engine::SetFeedbackGain, &engine, _1));
 
     // Feedback delay in seconds
     controls.Register(ControlParam::FeedbackDelay, 0.001f, 0.001f, 0.2f, std::bind(&Engine::SetFeedbackDelay, &engine, _1));

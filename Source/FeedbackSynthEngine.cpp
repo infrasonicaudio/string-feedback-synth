@@ -91,7 +91,7 @@ void Engine::Process(float &outL, float &outR)
 
     // Get noise + feedback output
     float inL = fb_delayline_[0].Read(fb_delay_samp_) + noise_samp; 
-    float inR = fb_delayline_[1].Read(daisysp::fmax(1.0f, fb_delay_samp_ - 16.f)) + noise_samp;
+    float inR = fb_delayline_[1].Read(daisysp::fmax(1.0f, fb_delay_samp_ - 4.f)) + noise_samp;
 
     // Process through KS resonator
     float sampL = strings_[0].Process(inL);
@@ -99,8 +99,8 @@ void Engine::Process(float &outL, float &outR)
 
     // Distort + Clip
     // TODO: Oversample this? Another distortion algo maybe?
-    sampL = SoftClip(sampL * dbfs2lin(12.0f));
-    sampR = SoftClip(sampR * dbfs2lin(12.0f));
+    sampL = SoftClip(sampL * 4.0f);
+    sampR = SoftClip(sampR * 4.0f);
 
     // Filter in feedback loop
     fb_lpf_.ProcessStereo(sampL, sampR);

@@ -41,7 +41,7 @@ static void register_controls(Controls &controls, Engine &engine) {
     controls.Register(ControlParam::EchoDelayTime, 0.5f, 0.05f, 5.0f, std::bind(&Engine::SetEchoDelayTime, &engine, _1));
 
     // Delay feedback
-    controls.Register(ControlParam::EchoDelayFeedback, 0.0f, 0.0f, 1.2f, std::bind(&Engine::SetEchoDelayFeedback, &engine, _1));
+    controls.Register(ControlParam::EchoDelayFeedback, 0.0f, 0.0f, 1.5f, std::bind(&Engine::SetEchoDelayFeedback, &engine, _1));
 }
 
 }

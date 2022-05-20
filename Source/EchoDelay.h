@@ -28,6 +28,8 @@ class EchoDelay {
         {
             sample_rate_ = sample_rate;
             delayLine_.Init();
+            bpf_.Init(sample_rate);
+            bpf_.SetParams(800.0f, 1.0f);
         }
 
         /**
@@ -69,7 +71,9 @@ class EchoDelay {
             float out;
             daisysp::fonepole(delay_time_current_, delay_time_target_, delay_smooth_coef_);
             delayLine_.SetDelay(delay_time_current_ * sample_rate_);
-            out = daisysp::SoftClip(delayLine_.Read());
+            out = delayLine_.Read();
+            out = bpf_.Process(out);
+            out = daisysp::SoftClip(out);
             delayLine_.Write(out * feedback_ + in);
             return out;
         }
@@ -89,8 +93,7 @@ class EchoDelay {
         float feedback_;
 
         daisysp::DelayLine<float, MaxLength> delayLine_;
-        // LPF12 lpf_;
-        // HPF12 hpf_;
+        BPF12 bpf_;
 };
 
 }

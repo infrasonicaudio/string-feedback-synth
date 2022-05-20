@@ -29,11 +29,11 @@ void Engine::Init(const float sample_rate)
     }
 
     fb_lpf_.Init(sample_rate);
-    fb_lpf_.SetQ(1.f);
+    fb_lpf_.SetQ(0.9f);
     fb_lpf_.SetCutoff(18000.0f);
 
     fb_hpf_.Init(sample_rate);
-    fb_hpf_.SetQ(1.f);
+    fb_hpf_.SetQ(0.9f);
     fb_hpf_.SetCutoff(60.f);
 }
 
@@ -112,8 +112,8 @@ void Engine::Process(float &outL, float &outR)
 
     // ---> Output
 
-    sampL = sampL * 0.75f + echo_delay_[0].Process(sampL) * 0.25f;
-    sampR = sampR * 0.75f + echo_delay_[1].Process(sampR) * 0.25f;
+    sampL = sampL * 0.5f + echo_delay_[0].Process(sampL) * 0.5f;
+    sampR = sampR * 0.5f + echo_delay_[1].Process(sampR) * 0.5f;
 
     outL = sampL * 0.05f;
     outR = sampR * 0.05f;

@@ -21,7 +21,7 @@ using namespace infrasonic;
 
 void* SDRAM::allocate_raw(size_t size, size_t alignment)
 {
-    // After aligning the pool offset, we will need at minimum
+    // After aligning the pool offset, we will need at most
     // `size + (alignment -1)` bytes to have been allocated
     // in the pool.
     const size_t align_mask = (alignment - 1);

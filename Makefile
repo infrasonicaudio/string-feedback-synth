@@ -1,6 +1,10 @@
 # Project Name
 TARGET = FeedbackSynth
 
+LIBDAISY_DIR = lib/libDaisy
+DAISYSP_DIR = lib/DaisySP
+CMSIS_DSP_SRC_DIR = ${LIBDAISY_DIR}/Drivers/CMSIS/DSP/Source
+
 C_DEFS = \
 	-DUSE_ARM_DSP \
 	-DTARGET_DAISY
@@ -9,17 +13,14 @@ C_INCLUDES = \
 	-ISource/
 
 C_SOURCES = \
-	lib/libDaisy/Drivers/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
-	lib/libDaisy/Drivers/CMSIS/DSP/Source/ControllerFunctions/arm_sin_cos_f32.c
+	${CMSIS_DSP_SRC_DIR}/CommonTables/arm_common_tables.c \
+	${CMSIS_DSP_SRC_DIR}/ControllerFunctions/arm_sin_cos_f32.c
 
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
 	Source/BiquadFilters.cpp \
 	Source/FeedbackSynthEngine.cpp \
 	Source/KarplusString.cpp
-
-LIBDAISY_DIR = lib/libDaisy
-DAISYSP_DIR = lib/DaisySP
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core

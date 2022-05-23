@@ -15,6 +15,10 @@ namespace infrasonic
 
 using namespace infrasonic;
 
+// Implementation here inspired by Eurorack Blocks MonotonicMemoryPool but
+// combined into one single, far less flexible interface
+// https://github.com/ohmtech-rdi/eurorack-blocks/blob/main/include/erb/detail/MonotonicMemoryPool.hpp 
+
 void* SDRAM::allocate_raw(size_t size, size_t alignment)
 {
     // After aligning the pool offset, we will need at minimum
@@ -27,7 +31,7 @@ void* SDRAM::allocate_raw(size_t size, size_t alignment)
     const size_t pos = pool_pos_.fetch_add (max_size, std::memory_order_relaxed);
 
     if (pos + max_size > INFS_SDRAM_POOL_SIZE) {
-        // TODO: This should be handled as an error
+        asm ("bkpt 255");
         return nullptr;
     }
 

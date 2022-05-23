@@ -57,12 +57,7 @@ class Engine {
         LPF12 fb_lpf_;
         HPF12 fb_hpf_;
 
-        #ifdef TARGET_DAISY
-        using EchoDelayPtr = EchoDelay<kMaxEchoDelaySamp>*;
-        #else
         using EchoDelayPtr = std::unique_ptr<EchoDelay<kMaxEchoDelaySamp>>;
-        #endif
-
         EchoDelayPtr echo_delay_[2];
 
         Engine(const Engine &other) = delete;

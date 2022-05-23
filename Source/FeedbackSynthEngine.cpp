@@ -12,8 +12,8 @@ Engine::Engine() {
     using ED = EchoDelay<kMaxEchoDelaySamp>;
 #ifdef TARGET_DAISY
     // TODO: pseudo-dynamic allocation into SDRAM
-    echo_delay_[0] = SDRAM::allocate<ED>();
-    echo_delay_[1] = SDRAM::allocate<ED>();
+    echo_delay_[0] = EchoDelayPtr(SDRAM::allocate<ED>());
+    echo_delay_[1] = EchoDelayPtr(SDRAM::allocate<ED>());
 #else
     echo_delay_[0] = std::make_unique<ED>();
     echo_delay_[1] = std::make_unique<ED>();

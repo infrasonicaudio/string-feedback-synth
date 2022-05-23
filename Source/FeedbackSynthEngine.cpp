@@ -4,6 +4,15 @@
 using namespace infrasonic::FeedbackSynth;
 using namespace daisysp;
 
+Engine::Engine() {
+#ifdef TARGET_DAISY
+    // TODO: pseudo-dynamic allocation into SDRAM
+#else
+    echo_delay_[0] = std::make_unique<EchoDelay<kMaxEchoDelaySamp>>();
+    echo_delay_[1] = std::make_unique<EchoDelay<kMaxEchoDelaySamp>>();
+#endif
+}
+
 void Engine::Init(const float sample_rate)
 {
     sample_rate_ = sample_rate;
@@ -21,10 +30,10 @@ void Engine::Init(const float sample_rate)
 
         fb_delayline_[i].Init();
 
-        echo_delay_[i].Init(sample_rate);
-        echo_delay_[i].SetDelayTime(5.0f, true);
-        echo_delay_[i].SetFeedback(0.5f);
-        echo_delay_[i].SetLagTime(0.5f);
+        echo_delay_[i]->Init(sample_rate);
+        echo_delay_[i]->SetDelayTime(5.0f, true);
+        echo_delay_[i]->SetFeedback(0.5f);
+        echo_delay_[i]->SetLagTime(0.5f);
     }
 
     fb_lpf_.Init(sample_rate);
@@ -66,14 +75,14 @@ void Engine::SetFeedbackHPFCutoff(const float cutoff_hz)
 void Engine::SetEchoDelayTime(const float echo_time)
 {
     // TODO: ping pong mode?
-    echo_delay_[0].SetDelayTime(echo_time);
-    echo_delay_[1].SetDelayTime(echo_time);
+    echo_delay_[0]->SetDelayTime(echo_time);
+    echo_delay_[1]->SetDelayTime(echo_time);
 }
 
 void Engine::SetEchoDelayFeedback(const float echo_fb)
 {
-    echo_delay_[0].SetFeedback(echo_fb);
-    echo_delay_[1].SetFeedback(echo_fb);
+    echo_delay_[0]->SetFeedback(echo_fb);
+    echo_delay_[1]->SetFeedback(echo_fb);
 }
 
 void Engine::Process(float &outL, float &outR)
@@ -111,8 +120,8 @@ void Engine::Process(float &outL, float &outR)
 
     // ---> Output
 
-    sampL = sampL * 0.5f + echo_delay_[0].Process(sampL) * 0.5f;
-    sampR = sampR * 0.5f + echo_delay_[1].Process(sampR) * 0.5f;
+    sampL = sampL * 0.5f + echo_delay_[0]->Process(sampL) * 0.5f;
+    sampR = sampR * 0.5f + echo_delay_[1]->Process(sampR) * 0.5f;
 
     outL = sampL * 0.05f;
     outR = sampR * 0.05f;

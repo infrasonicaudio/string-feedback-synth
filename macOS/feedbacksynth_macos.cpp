@@ -22,6 +22,7 @@ static unsigned int kBlockSize = 64;
 
 using namespace infrasonic;
 
+static FeedbackSynth::Engine engine;
 static FeedbackSynth::Controls controls;
 
 void midi_callback(double deltatime, std::vector< unsigned char > *message, void *userData)
@@ -44,7 +45,7 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
     std::cout << "Stream underflow detected!" << std::endl;
   // Write interleaved audio data.
   for ( i=0; i<nBufferFrames; i++ ) {
-    FeedbackSynth::Engine::instance().Process(outL, outR);
+    engine.Process(outL, outR);
     *buffer++ = outL;
     *buffer++ = outR;
   }
@@ -132,7 +133,7 @@ int main()
   std::unique_ptr<RtMidiIn> midiin;
 
   // Init DSP classes
-  FeedbackSynth::Engine::instance().Init(static_cast<float>(kSampleRate));
+  engine.Init(static_cast<float>(kSampleRate));
 
   // Start MIDI
   startMIDI(midiin);
@@ -144,7 +145,7 @@ int main()
   // This should be done AFTER opening DAC but before starting stream
   // so that we are using the system-updated block size
   controls.Init(static_cast<float>(kSampleRate) / static_cast<float>(kBlockSize));
-  FeedbackSynth::register_controls(controls, FeedbackSynth::Engine::instance());
+  FeedbackSynth::register_controls(controls, engine);
   FeedbackSynth::MIDIHandler::Init(&controls);
 
   // Start DAC output stream

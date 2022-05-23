@@ -2,7 +2,8 @@
 TARGET = FeedbackSynth
 
 C_DEFS = \
-	-DUSE_ARM_DSP
+	-DUSE_ARM_DSP \
+	-DTARGET_DAISY
 
 C_INCLUDES = \
 	-ISource/

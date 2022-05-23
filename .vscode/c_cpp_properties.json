@@ -23,7 +23,8 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "TARGET_DAISY"
             ],
             "compilerPath": "/usr/local/bin/arm-none-eabi-g++",
             "cStandard": "c11",

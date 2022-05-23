@@ -2,6 +2,7 @@
 #ifndef IFS_FEEDBACK_SYNTH_ENGINE_H
 #define IFS_FEEDBACK_SYNTH_ENGINE_H
 
+#include <memory>
 #include <daisysp.h>
 #include "BiquadFilters.h"
 #include "EchoDelay.h"
@@ -18,16 +19,8 @@ class Engine {
 
     public:
 
-        // Singleton instance of synthesis engine.
-        // Implemented this way so the engine can own + use a static
-        // echo delay object with a long delay line, allocated in SDRAM.
-        // 
-        //   - A better approach would be to either link so the heap
-        //     goes to SDRAM, or create an aligned memory allocator to SDRAM
-        static Engine& instance() {
-            static Engine engine;
-            return engine;
-        }
+        Engine();
+        ~Engine() {};
 
         void Init(const float sample_rate);
 
@@ -64,10 +57,7 @@ class Engine {
         LPF12 fb_lpf_;
         HPF12 fb_hpf_;
 
-        EchoDelay<kMaxEchoDelaySamp> echo_delay_[2];
-
-        Engine() {};
-        ~Engine() {};
+        std::unique_ptr<EchoDelay<kMaxEchoDelaySamp>> echo_delay_[2];
 
         Engine(const Engine &other) = delete;
         Engine(Engine &&other) = delete;

@@ -41,6 +41,7 @@ add_executable(
     FeedbackSynth_macos.cpp
     ../Source/BiquadFilters.cpp
     ../Source/FeedbackSynthEngine.cpp
+    ../Source/KarplusString.cpp
 )
 
 add_dependencies(feedbacksynth rtaudio rtmidi DaisySP)

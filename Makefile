@@ -14,7 +14,8 @@ C_SOURCES = \
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
 	Source/BiquadFilters.cpp \
-	Source/FeedbackSynthEngine.cpp
+	Source/FeedbackSynthEngine.cpp \
+	Source/KarplusString.cpp
 
 LIBDAISY_DIR = lib/libDaisy
 DAISYSP_DIR = lib/DaisySP

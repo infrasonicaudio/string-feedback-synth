@@ -5,6 +5,7 @@
 #include <daisysp.h>
 #include "BiquadFilters.h"
 #include "EchoDelay.h"
+#include "KarplusString.h"
 
 #ifdef __arm__
 #include <dev/sdram.h>
@@ -56,9 +57,8 @@ class Engine {
         float fb_delay_samp_ = 64.f;
         float fb_delay_samp_target_ = 64.f;
 
-        // TODO: Should ideally be pink noise
+        infrasonic::String strings_[2];
         daisysp::WhiteNoise noise_;
-        daisysp::String strings_[2];
         daisysp::DelayLine<float, kMaxFeedbackDelaySamp> fb_delayline_[2];
 
         LPF12 fb_lpf_;

@@ -25,7 +25,7 @@ static void register_controls(Controls &controls, Engine &engine) {
     using namespace std::placeholders;
 
     // Pitch as nn
-    controls.Register(ControlParam::StringPitch, 40.0f, 24.0f, 80.0f, std::bind(&Engine::SetStringPitch, &engine, _1), 0.2f);
+    controls.Register(ControlParam::StringPitch, 40.0f, 16.0f, 72.0f, std::bind(&Engine::SetStringPitch, &engine, _1), 0.2f);
 
     // Feedback Gain in dbFS
     controls.Register(ControlParam::FeedbackGain, -60.0f, -60.0f, 12.0f, std::bind(&Engine::SetFeedbackGain, &engine, _1));

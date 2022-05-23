@@ -20,7 +20,8 @@ CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
 	Source/BiquadFilters.cpp \
 	Source/FeedbackSynthEngine.cpp \
-	Source/KarplusString.cpp
+	Source/KarplusString.cpp \
+	Source/memory/sdram_alloc.cpp
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core

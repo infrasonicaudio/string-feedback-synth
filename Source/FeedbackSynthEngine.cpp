@@ -1,15 +1,22 @@
 #include "FeedbackSynthEngine.h"
 #include "DSPUtils.h"
 
+#ifdef TARGET_DAISY
+#include "memory/sdram_alloc.h"
+#endif
+
 using namespace infrasonic::FeedbackSynth;
 using namespace daisysp;
 
 Engine::Engine() {
+    using ED = EchoDelay<kMaxEchoDelaySamp>;
 #ifdef TARGET_DAISY
     // TODO: pseudo-dynamic allocation into SDRAM
+    echo_delay_[0] = SDRAM::allocate<ED>();
+    echo_delay_[1] = SDRAM::allocate<ED>();
 #else
-    echo_delay_[0] = std::make_unique<EchoDelay<kMaxEchoDelaySamp>>();
-    echo_delay_[1] = std::make_unique<EchoDelay<kMaxEchoDelaySamp>>();
+    echo_delay_[0] = std::make_unique<ED>();
+    echo_delay_[1] = std::make_unique<ED>();
 #endif
 }
 

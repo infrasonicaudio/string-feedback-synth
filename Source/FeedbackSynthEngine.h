@@ -18,9 +18,8 @@ namespace FeedbackSynth {
 class Engine {
 
     public:
-
-        Engine();
-        ~Engine() {};
+        Engine() = default;
+        ~Engine() = default;
 
         void Init(const float sample_rate);
 
@@ -47,7 +46,7 @@ class Engine {
         float fb_gain_ = 0.0f;
 
         float fb_delay_smooth_coef_;
-        float fb_delay_samp_ = 64.f;
+        float fb_delay_samp_ = 1000.f;
         float fb_delay_samp_target_ = 64.f;
 
         infrasonic::String strings_[2];

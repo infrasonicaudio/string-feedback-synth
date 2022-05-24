@@ -29,9 +29,10 @@ inline float onepole_coef(float time_s, float sample_rate) {
 inline float tanf(const float x)
 {
 #ifdef __arm__
-    float s, c;
-    arm_sin_cos_f32(x, &s, &c);
-    return s / c;
+    return std::tan(x);
+    // float s, c;
+    // arm_sin_cos_f32(x, &s, &c);
+    // return s / c;
 #else
     return std::tanf(x);
 #endif

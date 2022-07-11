@@ -17,6 +17,7 @@ C_SOURCES = \
 CPP_SOURCES = \
 	FeedbackSynth_main.cpp \
 	Source/BiquadFilters.cpp \
+	Source/FeedbackSynthControls.cpp \
 	Source/FeedbackSynthEngine.cpp \
 	Source/KarplusString.cpp \
 	Source/memory/sdram_alloc.cpp

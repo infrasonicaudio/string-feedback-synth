@@ -90,6 +90,7 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "arm_common_tables.h": "c",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "fstream": "cpp"
     }
 }

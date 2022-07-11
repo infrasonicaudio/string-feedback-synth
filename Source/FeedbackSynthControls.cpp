@@ -11,8 +11,13 @@ void FeedbackSynth::Controls::Init(DaisySeed &hw, Engine &engine) {
 }
 
 void FeedbackSynth::Controls::Update(DaisySeed &hw) {
-    params_.UpdateNormalized(Parameter::StringPitch, 1.0f - hw.adc.GetMuxFloat(0, 0), false, daisysp::Mapping::EXP);
-    params_.UpdateNormalized(Parameter::FeedbackGain, 1.0f - hw.adc.GetMuxFloat(0, 1));
+    params_.UpdateNormalized(Parameter::StringPitch,        1.0f - hw.adc.GetMuxFloat(0, 0));
+    params_.UpdateNormalized(Parameter::FeedbackGain,       1.0f - hw.adc.GetMuxFloat(0, 1));
+    params_.UpdateNormalized(Parameter::FeedbackDelay,      1.0f - hw.adc.GetMuxFloat(0, 2));
+    params_.UpdateNormalized(Parameter::FeedbackLPFCutoff,  1.0f - hw.adc.GetMuxFloat(0, 3));
+    params_.UpdateNormalized(Parameter::FeedbackHPFCutoff,  1.0f - hw.adc.GetMuxFloat(0, 4));
+    params_.UpdateNormalized(Parameter::EchoDelayTime,      1.0f - hw.adc.GetMuxFloat(0, 5));
+    params_.UpdateNormalized(Parameter::EchoDelayFeedback,  1.0f - hw.adc.GetMuxFloat(0, 6));
 }
 
 void FeedbackSynth::Controls::initADCs(DaisySeed &hw) {
@@ -35,14 +40,14 @@ void FeedbackSynth::Controls::registerParams(Engine &engine) {
     params_.Register(Parameter::FeedbackGain, -60.0f, -60.0f, 12.0f, std::bind(&Engine::SetFeedbackGain, &engine, _1));
 
     // Feedback delay in seconds
-    params_.Register(Parameter::FeedbackDelay, 0.001f, 0.001f, 0.2f, std::bind(&Engine::SetFeedbackDelay, &engine, _1));
+    params_.Register(Parameter::FeedbackDelay, 0.001f, 0.001f, 0.2f, std::bind(&Engine::SetFeedbackDelay, &engine, _1), 0.2f, daisysp::Mapping::EXP);
 
     // Feedback filter cutoff in hz
-    params_.Register(Parameter::FeedbackLPFCutoff, 18000.0f, 100.0f, 18000.0f, std::bind(&Engine::SetFeedbackLPFCutoff, &engine, _1));
-    params_.Register(Parameter::FeedbackHPFCutoff, 250.0f, 32.0f, 2000.0f, std::bind(&Engine::SetFeedbackHPFCutoff, &engine, _1));
+    params_.Register(Parameter::FeedbackLPFCutoff, 18000.0f, 100.0f, 18000.0f, std::bind(&Engine::SetFeedbackLPFCutoff, &engine, _1), 0.05f, daisysp::Mapping::EXP);
+    params_.Register(Parameter::FeedbackHPFCutoff, 250.0f, 32.0f, 2000.0f, std::bind(&Engine::SetFeedbackHPFCutoff, &engine, _1), 0.05f, daisysp::Mapping::EXP);
 
     // Delay time in s
-    params_.Register(Parameter::EchoDelayTime, 0.5f, 0.05f, 5.0f, std::bind(&Engine::SetEchoDelayTime, &engine, _1));
+    params_.Register(Parameter::EchoDelayTime, 0.5f, 0.05f, 5.0f, std::bind(&Engine::SetEchoDelayTime, &engine, _1), 0.05f, daisysp::Mapping::EXP);
 
     // Delay feedback
     params_.Register(Parameter::EchoDelayFeedback, 0.0f, 0.0f, 1.5f, std::bind(&Engine::SetEchoDelayFeedback, &engine, _1));

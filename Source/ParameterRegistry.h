@@ -3,8 +3,9 @@
 #define INFS_CONTROLS_H
 
 #include <functional>
-#include <map>
+#include <unordered_map>
 #include <daisysp.h>
+#include "SmoothedValue.h"
 #include "DSPUtils.h"
 
 namespace infrasonic {
@@ -30,9 +31,12 @@ class ParameterRegistry {
             control_rate_ = control_rate;
         }
 
-        void Register(const ParamId id, const float initial_value, const float min, const float max, Handler handler, float smooth_time = 0.05f)
+        void Register(const ParamId id, const float initial_value, const float min, const float max, 
+                      Handler handler, const float smooth_time = 0.05f, 
+                      const daisysp::Mapping mapping = daisysp::Mapping::LINEAR)
         {
-            ParamState state(initial_value, min, max, onepole_coef(smooth_time, control_rate_), handler);
+            const float coef = onepole_coef_t60(smooth_time, control_rate_);
+            ParamState state(initial_value, min, max, coef, mapping, handler);
             param_states_.insert({id, state});
         }
 
@@ -43,23 +47,17 @@ class ParameterRegistry {
             if (it != param_states_.end()) {
                 auto &state = it->second;
                 auto clampedValue = daisysp::fclamp(value, state.min, state.max);
-                state.target = clampedValue;
-                if (immediate) {
-                    state.current = clampedValue;
-                }
+                state.value.set(clampedValue, immediate);
             }
         }
 
-        void UpdateNormalized(const ParamId id, const float normValue, const bool immediate = false, const daisysp::Mapping curve = daisysp::Mapping::LINEAR)
+        void UpdateNormalized(const ParamId id, const float normValue, const bool immediate = false)
         {
             auto it = param_states_.find(id);
             if (it != param_states_.end()) {
                 auto &state = it->second;
-                auto mappedValue = daisysp::fmap(daisysp::fclamp(normValue, 0.0f, 1.0f), state.min, state.max, curve);
-                state.target = mappedValue;
-                if (immediate) {
-                    state.current = mappedValue;
-                }
+                auto mappedValue = daisysp::fmap(daisysp::fclamp(normValue, 0.0f, 1.0f), state.min, state.max, state.mapping);
+                state.value.set(mappedValue, immediate);
             }
         }
 
@@ -67,19 +65,8 @@ class ParameterRegistry {
         void Process()
         {
             for (auto &param : param_states_) {
-
                 auto &state = param.second;
-
-                // apply smoothing
-                if (state.current != state.target) {
-                    if (fabsf(state.current - state.target) < kParamSmoothingThresh) {
-                        state.current = state.target;
-                    } else {
-                        daisysp::fonepole(state.current, state.target, state.smooth_coef);
-                    }
-                }
-
-                state.handler(state.current);
+                state.handler(state.value.get());
             }
         }
     
@@ -88,26 +75,26 @@ class ParameterRegistry {
         static constexpr float kParamSmoothingThresh = 0.001f;
 
         struct ParamState {
-            float current;
-            float target;
+            SmoothedValue value;
             
             const float min;
             const float max;
-            const float smooth_coef;
+            const daisysp::Mapping mapping;
             const Handler handler;
 
             ParamState() = delete;
-            ParamState(const float initial, const float min, const float max, const float smooth_coef, const Handler handler)
-                : current(initial)
-                , target(initial)
+            ParamState(const float initial, const float min, const float max, 
+                       const float coef, const daisysp::Mapping mapping, const Handler handler)
+                : value(initial, coef)
                 , min(min)
                 , max(max)
-                , smooth_coef(smooth_coef)
+                , mapping(mapping)
                 , handler(handler)
-            {}
+            {
+            }
         };
 
-        using ParamStates = std::map<ParamId, ParamState>;
+        using ParamStates = std::unordered_map<ParamId, ParamState>;
 
         float control_rate_;
         ParamStates param_states_;

@@ -4,7 +4,7 @@
 
 using namespace infrasonic;
 
-void String::Init(float sample_rate)
+void KarplusString::Init(float sample_rate)
 {
     sample_rate_ = sample_rate;
 
@@ -22,7 +22,7 @@ void String::Init(float sample_rate)
     crossfade_.Init();
 }
 
-void String::Reset()
+void KarplusString::Reset()
 {
     string_.Reset();
     iir_damping_filter_.Init(sample_rate_);
@@ -33,28 +33,28 @@ void String::Reset()
     src_phase_                      = 0.0f;
 }
 
-float String::Process(const float in)
+float KarplusString::Process(const float in)
 {
     return ProcessInternal(in);
 }
 
-void String::SetFreq(float freq)
+void KarplusString::SetFreq(float freq)
 {
     freq /= sample_rate_;
     frequency_ = daisysp::fclamp(freq, 0.f, .25f);
 }
 
-void String::SetBrightness(float brightness)
+void KarplusString::SetBrightness(float brightness)
 {
     brightness_ = daisysp::fclamp(brightness, 0.f, 1.f);
 }
 
-void String::SetDamping(float damping)
+void KarplusString::SetDamping(float damping)
 {
     damping_ = daisysp::fclamp(damping, 0.f, 1.f);
 }
 
-float String::ProcessInternal(const float in)
+float KarplusString::ProcessInternal(const float in)
 {
     float brightness = brightness_;
 

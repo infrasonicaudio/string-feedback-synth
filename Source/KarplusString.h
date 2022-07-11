@@ -8,7 +8,7 @@
 namespace infrasonic
 {
 /**  
- * Modified version of String class from DaisySP:
+ * Modified version of KarplusString class from DaisySP:
  *  - Increase delay line length for very low pitches 
  *  - Remove nonlinearity processing (not needed for feedback synth)
  *  - Re-namespaced to infrasonic
@@ -16,11 +16,11 @@ namespace infrasonic
  *  Original code licensed as MIT Copyright (c) 2020 Electrosmith, Corp.
  *  (see DaisySP/LICENSE)
 */
-class String
+class KarplusString
 {
   public:
-    String() {}
-    ~String() {}
+    KarplusString() {}
+    ~KarplusString() {}
 
     /** Initialize the module.
         \param sample_rate Audio engine sample rate

@@ -109,8 +109,8 @@ class ControlsRegistry {
 
         using ParamStates = std::map<ParamId, ParamState>;
 
-        float control_rate_{};
-        ParamStates param_states_{};
+        float control_rate_;
+        ParamStates param_states_;
 };
 
 }

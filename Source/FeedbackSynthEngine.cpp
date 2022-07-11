@@ -88,6 +88,11 @@ void Engine::SetEchoDelayFeedback(const float echo_fb)
     echo_delay_[1]->SetFeedback(echo_fb);
 }
 
+void Engine::SetEchoDelaySendAmount(const float echo_send)
+{
+    echo_send_ = echo_send;
+}
+
 void Engine::Process(float &outL, float &outR)
 {
     // --- Update audio-rate-smoothed control params ---
@@ -96,17 +101,18 @@ void Engine::Process(float &outL, float &outR)
 
     // --- Process Samples ---
 
+    float inL, inR, sampL, sampR, echoL, echoR;
     const float noise_samp = noise_.Process();
 
     // ---> Feedback Loop
 
     // Get noise + feedback output
-    float inL = fb_delayline_[0].Read(fb_delay_samp_) + noise_samp; 
-    float inR = fb_delayline_[1].Read(daisysp::fmax(1.0f, fb_delay_samp_ - 4.f)) + noise_samp;
+    inL = fb_delayline_[0].Read(fb_delay_samp_) + noise_samp; 
+    inR = fb_delayline_[1].Read(daisysp::fmax(1.0f, fb_delay_samp_ - 4.f)) + noise_samp;
 
     // Process through KS resonator
-    float sampL = strings_[0].Process(inL);
-    float sampR = strings_[1].Process(inR);
+    sampL = strings_[0].Process(inL);
+    sampR = strings_[1].Process(inR);
 
     // Distort + Clip
     // TODO: Oversample this? Another distortion algo maybe?
@@ -117,18 +123,21 @@ void Engine::Process(float &outL, float &outR)
     fb_lpf_.ProcessStereo(sampL, sampR);
     fb_hpf_.ProcessStereo(sampL, sampR);
 
+    // TODO: Allpass
+
     // Write back into delay with attenuation
     fb_delayline_[0].Write(sampL * fb_gain_);
     fb_delayline_[1].Write(sampR * fb_gain_);
 
     // ---> Output
 
-    sampL = sampL * 0.5f + echo_delay_[0]->Process(sampL) * 0.5f;
-    sampR = sampR * 0.5f + echo_delay_[1]->Process(sampR) * 0.5f;
+    echoL = echo_delay_[0]->Process(sampL * echo_send_);
+    echoR = echo_delay_[1]->Process(sampR * echo_send_);
 
-    outL = sampL * 0.25f;
-    outR = sampR * 0.25f;
+    sampL = 0.5f * (sampL + echoL);
+    sampR = 0.5f * (sampR + echoR);;
 
-    // TODO: Allpass
-
+    // TODO: Out level
+    outL = sampL * 0.5f;
+    outR = sampR * 0.5f;
 }

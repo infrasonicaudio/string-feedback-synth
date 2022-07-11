@@ -44,7 +44,8 @@ private:
         FeedbackLPFCutoff,
         FeedbackHPFCutoff,
         EchoDelayTime,
-        EchoDelayFeedback
+        EchoDelayFeedback,
+        EchoDelaySend
     };
 
     using Parameters = ParameterRegistry<Parameter>;
@@ -54,7 +55,6 @@ private:
     void initADCs(daisy::DaisySeed &hw);
     void registerParams(Engine &engine);
 };
-
 
 
 }

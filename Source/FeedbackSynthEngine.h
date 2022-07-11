@@ -33,6 +33,7 @@ class Engine {
 
         void SetEchoDelayTime(const float echo_time);
         void SetEchoDelayFeedback(const float echo_fb);
+        void SetEchoDelaySendAmount(const float echo_send);
 
         void Process(float &outL, float &outR);
 
@@ -44,6 +45,7 @@ class Engine {
 
         float sample_rate_;
         float fb_gain_ = 0.0f;
+        float echo_send_ = 0.0f;
 
         float fb_delay_smooth_coef_;
         float fb_delay_samp_ = 1000.f;

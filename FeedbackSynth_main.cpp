@@ -13,7 +13,7 @@ static const size_t kBlockSize = 4;
 
 static DaisySeed hw;
 static FeedbackSynth::Engine engine;
-static FeedbackSynth::Controls controls;
+static FeedbackSynth::Parameters params;
 
 // --- TODO: Move to dedicated class ---
 
@@ -36,8 +36,8 @@ void InitHwControls()
 
 void UpdateHwControls()
 {
-    controls.UpdateNormalized(FeedbackSynth::ControlParam::StringPitch, hw.adc.GetFloat(0));
-    controls.UpdateNormalized(FeedbackSynth::ControlParam::FeedbackGain, hw.adc.GetFloat(1));
+    params.UpdateNormalized(FeedbackSynth::Parameter::StringPitch, hw.adc.GetFloat(0));
+    params.UpdateNormalized(FeedbackSynth::Parameter::FeedbackGain, hw.adc.GetFloat(1));
 }
 
 // --- /TODO ---
@@ -45,7 +45,7 @@ void UpdateHwControls()
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
     UpdateHwControls();
-    controls.Process();
+    params.Process();
     for (size_t i=0; i<size; i++) {
         engine.Process(OUT_L[i], OUT_R[i]);
     }
@@ -55,13 +55,12 @@ int main(void)
 {
     hw.Init();
 
-    InitHwControls();
-
     hw.SetAudioSampleRate(kSampleRate);
     hw.SetAudioBlockSize(kBlockSize);
     engine.Init(hw.AudioSampleRate());
-    controls.Init(hw.AudioSampleRate() / static_cast<float>(kBlockSize));
-    FeedbackSynth::register_controls(controls, engine);
+    params.Init(hw.AudioSampleRate() / static_cast<float>(kBlockSize));
+
+    FeedbackSynth::RegisterParameters(params, engine);
 
     hw.StartAudio(AudioCallback);
 

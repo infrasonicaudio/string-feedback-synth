@@ -12,54 +12,54 @@ class MIDIHandler {
     public:
         MIDIHandler() = delete;
 
-        static void Init(Controls * const controls)
+        static void Init(Parameters* const params)
         {
-            controls_ = controls;
+            params_ = params;
         }
 
         static void NoteOn(unsigned char channel, unsigned char nn, unsigned char velocity)
         {
-            assert(controls_ != nullptr);
-            controls_->Update(ControlParam::StringPitch, nn, true);
+            assert(params_ != nullptr);
+            params_->Update(Parameter::StringPitch, nn, true);
         }
 
         static void NoteOff(unsigned char channel, unsigned char nn, unsigned char velocity)
         {
-            assert(controls_ != nullptr);
+            assert(params_ != nullptr);
         }
 
         static void ControlChange(unsigned char channel, unsigned char cc, unsigned char value)
         {
-            assert(controls_ != nullptr);
+            assert(params_ != nullptr);
             const auto value_norm = static_cast<float>(value) / 127.0f;
             switch (CCParam(cc)) {
 
                 case CCParam::FeedbackGain:
-                    controls_->UpdateNormalized(ControlParam::FeedbackGain, value_norm);
+                    params_->UpdateNormalized(Parameter::FeedbackGain, value_norm);
                     break; 
 
                 case CCParam::FeedbackDelay:
-                    controls_->UpdateNormalized(ControlParam::FeedbackDelay, value_norm, false, daisysp::Mapping::EXP);
+                    params_->UpdateNormalized(Parameter::FeedbackDelay, value_norm, false, daisysp::Mapping::EXP);
                     break; 
 
                 case CCParam::StringPitch:
-                    controls_->UpdateNormalized(ControlParam::StringPitch, value_norm);
+                    params_->UpdateNormalized(Parameter::StringPitch, value_norm);
                     break;
 
                 case CCParam::FeedbackLPFCutoff:
-                    controls_->UpdateNormalized(ControlParam::FeedbackLPFCutoff, value_norm, false, daisysp::Mapping::EXP);
+                    params_->UpdateNormalized(Parameter::FeedbackLPFCutoff, value_norm, false, daisysp::Mapping::EXP);
                     break;
 
                 case CCParam::FeedbackHPFCutoff:
-                    controls_->UpdateNormalized(ControlParam::FeedbackHPFCutoff, value_norm, false, daisysp::Mapping::EXP);
+                    params_->UpdateNormalized(Parameter::FeedbackHPFCutoff, value_norm, false, daisysp::Mapping::EXP);
                     break;
 
                 case CCParam::EchoDelayTime:
-                    controls_->UpdateNormalized(ControlParam::EchoDelayTime, value_norm, false, daisysp::Mapping::EXP);
+                    params_->UpdateNormalized(Parameter::EchoDelayTime, value_norm, false, daisysp::Mapping::EXP);
                     break;
 
                 case CCParam::EchoDelayFeedback:
-                    controls_->UpdateNormalized(ControlParam::EchoDelayFeedback, value_norm);
+                    params_->UpdateNormalized(Parameter::EchoDelayFeedback, value_norm);
                     break;
                 
                 default:
@@ -79,7 +79,7 @@ class MIDIHandler {
             EchoDelayFeedback = 24
         };
 
-        inline static Controls *controls_ = nullptr;
+        inline static Parameters *params_ = nullptr;
 };
 
 // namespace

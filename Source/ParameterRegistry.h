@@ -16,21 +16,21 @@ namespace infrasonic {
  * @tparam ParamId Template parameter specifying the parameter ID type
  */
 template<typename ParamId>
-class ControlsRegistry {
+class ParameterRegistry {
     
     public:
 
-        using ParamHandler = std::function<void(const float)>;
+        using Handler = std::function<void(const float)>;
 
-        ControlsRegistry() {};
-        ~ControlsRegistry() {};
+        ParameterRegistry() {};
+        ~ParameterRegistry() {};
 
         void Init(const float control_rate)
         {
             control_rate_ = control_rate;
         }
 
-        void Register(const ParamId id, const float initial_value, const float min, const float max, ParamHandler handler, float smooth_time = 0.05f)
+        void Register(const ParamId id, const float initial_value, const float min, const float max, Handler handler, float smooth_time = 0.05f)
         {
             ParamState state(initial_value, min, max, onepole_coef(smooth_time, control_rate_), handler);
             param_states_.insert({id, state});
@@ -94,10 +94,10 @@ class ControlsRegistry {
             const float min;
             const float max;
             const float smooth_coef;
-            const ParamHandler handler;
+            const Handler handler;
 
             ParamState() = delete;
-            ParamState(const float initial, const float min, const float max, const float smooth_coef, const ParamHandler handler)
+            ParamState(const float initial, const float min, const float max, const float smooth_coef, const Handler handler)
                 : current(initial)
                 , target(initial)
                 , min(min)
